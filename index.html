@@ -3,12 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>NEURAL MANIFOLD v10.0 - Voice & Gesture Control Active</title>
+    <title>QUANTUM MANIFOLD - BIOMETRIC CORE v11.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Syncopate:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
+        :root {
+            --primary: #00f3ff;
+            --secondary: #ffffff;
+            --bg: #02040a;
+            --panel-bg: rgba(2, 6, 15, 0.4);
+            --accent: #7000ff;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,196 +25,172 @@
 
         body {
             margin: 0;
-            background: #000;
+            background: var(--bg);
             overflow: hidden;
-            font-family: 'Rajdhani', sans-serif;
-            color: #00ff88;
+            font-family: 'Outfit', sans-serif;
+            color: var(--secondary);
             user-select: none;
         }
 
-        #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            pointer-events: none;
-            border-left: 3px solid #00ff88;
-            padding-left: 15px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-            max-width: 400px;
-        }
-
-        #hud h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            color: #00ff88;
-            text-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
-            margin-bottom: 15px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        .data-stream {
-            font-size: 11px;
-            opacity: 0.9;
-            line-height: 1.6;
-            margin-top: 10px;
-        }
-
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-            border-bottom: 1px dotted rgba(0, 255, 136, 0.3);
-            padding-bottom: 5px;
-        }
-
-        .status-label {
-            color: #00ff88;
-        }
-
-        .status-value {
-            color: #ffffff;
-            font-weight: bold;
-        }
-
-        canvas {
-            display: block;
-            cursor: grab;
-        }
-
-        canvas:active {
-            cursor: grabbing;
-        }
-
-        #control-panel {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-            background: rgba(0, 20, 10, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid #00ff88;
-            border-radius: 8px;
-            padding: 15px;
-            max-width: 300px;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
-        }
-
-        #control-panel h3 {
-            color: #00ff88;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .control-group {
-            margin-bottom: 15px;
-        }
-
-        .control-label {
-            display: block;
-            margin-bottom: 5px;
-            color: #00ff88;
-            font-size: 12px;
-        }
-
-        .control-slider {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            background: rgba(0, 255, 136, 0.2);
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .control-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #00ff88;
-            cursor: pointer;
-            box-shadow: 0 0 10px #00ff88;
-        }
-
-        #overlay {
+        #ui-wrapper {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 50;
             pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.8) 70%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            padding: 40px;
         }
 
-        #loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 200;
-            text-align: center;
-            color: #00ff88;
-            font-size: 24px;
-            text-shadow: 0 0 20px #00ff88;
+        .side-panel {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        #loading-progress {
-            width: 300px;
-            height: 4px;
-            background: rgba(0, 255, 136, 0.2);
-            margin-top: 20px;
-            border-radius: 2px;
+        .hud-block {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 24px;
+            pointer-events: auto;
+            transition: all 0.3s ease;
+        }
+
+        .hud-block:hover {
+            border-left: 1px solid var(--primary);
+            background: rgba(2, 6, 15, 0.6);
+        }
+
+        h1 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 14px;
+            letter-spacing: 4px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .stat-label {
+            opacity: 0.6;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-container {
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 10px;
             overflow: hidden;
         }
 
-        #loading-progress-bar {
+        .progress-bar {
             height: 100%;
+            background: var(--primary);
             width: 0%;
-            background: #00ff88;
-            box-shadow: 0 0 10px #00ff88;
-            transition: width 0.3s;
+            transition: width 0.1s;
         }
 
-        #particle-counter {
+        #control-panel {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            color: #00ff88;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            pointer-events: auto;
+            z-index: 150;
         }
 
-        #instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            z-index: 100;
-            color: #00ff88;
+        .interactive-chip {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            cursor: pointer;
             font-size: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            max-width: 300px;
+            letter-spacing: 2px;
+            color: var(--secondary);
+            transition: all 0.3s;
         }
 
-        .pulse {
+        .interactive-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        .interactive-chip.active {
+            background: var(--primary);
+            color: var(--bg);
+            border-color: var(--primary);
+        }
+
+        #camera-feed {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 240px;
+            height: 180px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        #camera-feed:hover {
+            opacity: 1;
+            border-color: var(--primary);
+        }
+
+        canvas#scene-canvas {
+            display: block;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #loader-text {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 18px;
+            letter-spacing: 12px;
+            margin-bottom: 40px;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0% {
-                opacity: 0.7;
+                opacity: 0.4;
             }
 
             50% {
@@ -214,317 +198,157 @@
             }
 
             100% {
-                opacity: 0.7;
+                opacity: 0.4;
             }
         }
 
-        .warning {
-            color: #ff8800 !important;
-        }
-
-        .critical {
-            color: #ff0000 !important;
-            animation: critical-pulse 0.5s infinite;
-        }
-
-        @keyframes critical-pulse {
-            0% {
-                opacity: 0.3;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.3;
-            }
-        }
-
-        #audio-toggle {
-            position: absolute;
-            bottom: 20px;
-            right: 340px;
-            z-index: 100;
-            background: rgba(0, 20, 10, 0.9);
-            border: 1px solid #00ff88;
-            color: #00ff88;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-        }
-
-        #audio-toggle:hover {
-            background: rgba(0, 40, 20, 0.9);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
-        #camera-feed {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 90;
-            width: 320px;
-            height: 240px;
-            border: 2px solid #00ff88;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-            display: none;
-        }
-
-        #camera-feed canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 6px;
-        }
-
-        #gesture-status {
-            position: absolute;
-            top: 270px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            color: #00ff88;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            text-align: center;
-            min-width: 200px;
-        }
-
-        #voice-status {
-            position: absolute;
-            top: 320px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            color: #00ff88;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            text-align: center;
-            min-width: 200px;
-        }
-
-        #voice-visualizer {
-            position: absolute;
-            bottom: 180px;
-            right: 20px;
-            z-index: 100;
-            width: 300px;
-            height: 80px;
-            background: rgba(0, 20, 10, 0.7);
-            border: 1px solid #00ff88;
-            border-radius: 8px;
-            padding: 10px;
-            display: none;
-        }
-
-        #voice-visualizer canvas {
-            width: 100%;
-            height: 100%;
-        }
-
-        #permission-prompt {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 300;
-            background: rgba(0, 20, 10, 0.95);
-            border: 2px solid #00ff88;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            max-width: 500px;
-            display: none;
-        }
-
-        #permission-prompt h2 {
-            color: #00ff88;
-            margin-bottom: 20px;
-        }
-
-        #permission-prompt p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .permission-btn {
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid #00ff88;
-            color: #00ff88;
-            padding: 10px 20px;
-            margin: 0 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-        }
-
-        .permission-btn:hover {
-            background: rgba(0, 255, 136, 0.4);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-        }
-
-        .gesture-indicator {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(0, 255, 136, 0.3);
-            border: 2px solid #00ff88;
-            z-index: 95;
-            pointer-events: none;
-            display: none;
-            box-shadow: 0 0 20px #00ff88;
-        }
-
-        #gesture-hand {
-            display: none;
-        }
-
-        #gesture-palm {
-            display: none;
-        }
-
-        #voice-wave {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        #permission-modal {
+            position: fixed;
             top: 0;
             left: 0;
-            z-index: 10;
-            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: #0a0e1a;
+            padding: 60px;
+            border: 1px solid var(--primary);
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .modal-content h2 {
+            font-family: 'Syncopate';
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+        }
+
+        .modal-content p {
+            margin-bottom: 40px;
+            opacity: 0.7;
+            line-height: 1.8;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 16px 40px;
+            font-family: 'Syncopate';
+            font-size: 12px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        /* Scrollbar Hide */
+        ::-webkit-scrollbar {
             display: none;
         }
     </style>
 </head>
 
 <body>
-    <div id="hud">
-        <h1>NEURAL MANIFOLD v10.0</h1>
-        <div class="status-item">
-            <span class="status-label">PROT_ID:</span>
-            <span class="status-value">VOICE_GESTURE_CORE</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">RESOLUTION:</span>
-            <span class="status-value">BIOMETRIC_INTERFACE</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">GESTURE_TRACKING:</span>
-            <span class="status-value" id="gesture-track-status">INACTIVE</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">VOICE_ANALYSIS:</span>
-            <span class="status-value" id="voice-status-display">INACTIVE</span>
-        </div>
-        <div class="data-stream" id="stream"></div>
-        <div class="status-item">
-            <span class="status-label">HAND_PRESENCE:</span>
-            <span class="status-value" id="hand-presence">0%</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">VOICE_POWER:</span>
-            <span class="status-value" id="voice-power">0 dB</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">GESTURE_IMPACT:</span>
-            <span class="status-value" id="gesture-impact">0%</span>
+
+    <div id="loading-screen">
+        <div id="loader-text">QUANTUM MANIFOLD</div>
+        <div style="width: 200px; height: 1px; background: rgba(255,255,255,0.1);">
+            <div id="loader-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;">
+            </div>
         </div>
     </div>
 
-    <div id="particle-counter">
-        ACTIVE NEURONS: <span id="particle-count">0</span>
+    <div id="permission-modal">
+        <div class="modal-content">
+            <h2>BIOMETRIC AUTHORIZATION</h2>
+            <p>To initialize the Quantum Manifold, the system requires local biometric access. Your data remains on your
+                device and is never transmitted.</p>
+            <button class="btn-primary" onclick="requestAccess()">INITIALIZE SYSTEM</button>
+        </div>
     </div>
 
-    <div id="instructions">
-        <div>VOICE CONTROLS:</div>
-        <div>LOUDER: Increase neural activity</div>
-        <div>HIGH PITCH: Increase oscillation</div>
-        <div>SPEAK: Activate voice commands</div>
-        <div>GESTURE CONTROLS:</div>
-        <div>OPEN HAND: Reset system</div>
-        <div>FIST: Increase density</div>
-        <div>WAVE: Control entanglement</div>
+    <div id="ui-wrapper">
+        <div class="side-panel">
+            <div class="hud-block">
+                <h1>CORE SYSTEM</h1>
+                <div class="stat-row">
+                    <span class="stat-label">MANIFEST:</span>
+                    <span class="stat-value">QUANTUM_FLUID_V11</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">ENTROPY:</span>
+                    <span class="stat-value" id="val-entropy">0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">FLUX:</span>
+                    <span class="stat-value" id="val-flux">INACTIVE</span>
+                </div>
+            </div>
+
+            <div class="hud-block">
+                <h1>BIOMETRICS</h1>
+                <div class="stat-row">
+                    <span class="stat-label">TRACKING:</span>
+                    <span class="stat-value" id="val-tracking">OFF</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">PRESENCE:</span>
+                    <span class="stat-value" id="val-presence">0%</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="pb-presence"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel" style="align-items: flex-end;">
+            <div class="hud-block">
+                <h1>NETWORK STATUS</h1>
+                <div class="stat-row">
+                    <span class="stat-label">NEURONS:</span>
+                    <span class="stat-value">120,000</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">ENTANGLEMENT:</span>
+                    <span class="stat-value" id="val-entanglement">84.2%</span>
+                </div>
+            </div>
+
+            <div class="hud-block">
+                <h1>AUDIO_FLOW</h1>
+                <div class="stat-row">
+                    <span class="stat-label">LEVEL:</span>
+                    <span class="stat-value" id="val-audio">0 dB</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="pb-audio"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="control-panel">
-        <h3>BIOMETRIC CONTROLS</h3>
-        <div class="control-group">
-            <label class="control-label">GESTURE SENSITIVITY</label>
-            <input type="range" min="1" max="100" value="75" class="control-slider" id="gesture-sensitivity">
-        </div>
-        <div class="control-group">
-            <label class="control-label">VOICE SENSITIVITY</label>
-            <input type="range" min="1" max="100" value="65" class="control-slider" id="voice-sensitivity">
-        </div>
-        <div class="control-group">
-            <label class="control-label">AUTO-CAMERA</label>
-            <input type="range" min="1" max="100" value="50" class="control-slider" id="camera-follow">
-        </div>
-        <div class="control-group">
-            <label class="control-label">BIOMETRIC LINK</label>
-            <input type="range" min="1" max="100" value="85" class="control-slider" id="biometric-link">
-        </div>
+        <div class="interactive-chip" id="btn-audio">AUDIO: DISABLED</div>
+        <div class="interactive-chip" id="btn-camera">CAMERA: DISABLED</div>
+        <div class="interactive-chip" onclick="resetView()">RESET_VIEW</div>
     </div>
 
-    <button id="audio-toggle">VOICE CONTROL: OFF</button>
-
-    <!-- Camera Feed Elements -->
     <div id="camera-feed">
         <canvas id="camera-canvas"></canvas>
     </div>
 
-    <div id="gesture-status">
-        GESTURE: <span id="current-gesture">None</span>
-    </div>
+    <canvas id="scene-canvas"></canvas>
 
-    <div id="voice-status">
-        VOICE: <span id="current-voice">Silent</span>
-    </div>
-
-    <div id="voice-visualizer">
-        <canvas id="voice-canvas"></canvas>
-    </div>
-
-    <!-- Gesture Indicators -->
-    <div class="gesture-indicator" id="gesture-hand"></div>
-    <div class="gesture-indicator" id="gesture-palm"></div>
-
-    <!-- Voice Wave Effect -->
-    <div id="voice-wave"></div>
-
-    <!-- Permission Prompt -->
-    <div id="permission-prompt">
-        <h2>BIOMETRIC ACCESS REQUIRED</h2>
-        <p>The Neural Manifold requires access to your microphone and camera for full biometric interaction.</p>
-        <p>Your data is processed locally and never transmitted.</p>
-        <div>
-            <button class="permission-btn" id="allow-all">ALLOW ALL</button>
-            <button class="permission-btn" id="allow-audio">AUDIO ONLY</button>
-            <button class="permission-btn" id="deny-all">DENY ALL</button>
-        </div>
-    </div>
-
-    <div id="overlay"></div>
-
-    <div id="loading">
-        <div>INITIALIZING BIOMETRIC INTERFACE...</div>
-        <div id="loading-progress">
-            <div id="loading-progress-bar"></div>
-        </div>
-        <div id="loading-status" style="font-size: 14px; margin-top: 10px;">LOADING GESTURE RECOGNITION...</div>
-    </div>
-
-    <!-- Three.js and dependencies -->
+    <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
@@ -533,1176 +357,280 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-
-    <!-- TensorFlow.js for hand tracking -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.0/dist/hand-pose-detection.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.min.js"></script>
 
-    <!-- Vertex Shader for Neural Particles -->
-    <script id="vertexShader" type="x-shader/x-vertex">
-    varying vec2 vUv;
-    varying float vDistance;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    uniform float time;
-    uniform float activity;
-    uniform float density;
-    uniform float oscillation;
-    uniform float gestureImpact;
-    uniform float voiceImpact;
-    
-    void main() {
-        vUv = uv;
-        vec3 pos = position;
-        
-        // Gesture impact effect
-        float gestureWave = sin(time * 3.0 + position.x * 0.02 + position.y * 0.01) * gestureImpact * 0.3;
-        pos += normal * gestureWave;
-        
-        // Voice impact effect
-        float voiceWave = cos(time * 2.5 + position.z * 0.03) * voiceImpact * 0.2;
-        pos.x += voiceWave;
-        pos.z += voiceWave * 0.7;
-        
-        // Neural oscillation effect
-        float neuralWave = sin(time * 2.0 + position.x * 0.5 + position.y * 0.3 + position.z * 0.7) * oscillation * 0.1;
-        pos += normal * neuralWave * activity;
-        
-        // Quantum entanglement effect
-        float entanglement = sin(time * 3.0 + position.y * 0.8) * cos(time * 1.7 + position.z * 0.5) * density * 0.05;
-        pos.x += entanglement;
-        pos.y += entanglement * 0.7;
-        pos.z += entanglement * 1.2;
-        
-        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        vDistance = -mvPosition.z;
-        vPosition = pos;
-        vNormal = normal;
-        
-        // Dynamic point size based on distance and biometric input
-        float pointSize = 3.0 * (1000.0 / -mvPosition.z) * (0.8 + activity * 0.5 + gestureImpact * 0.3);
-        gl_PointSize = pointSize;
-        
-        gl_Position = projectionMatrix * mvPosition;
-    }
-</script>
+    <!-- Custom Shaders -->
+    <script id="crystalVertex" type="x-shader/x-vertex">
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            vNormal = normalize(normalMatrix * normal);
+            vViewPosition = -mvPosition.xyz;
+            gl_Position = projectionMatrix * mvPosition;
+        }
+    </script>
+    <script id="crystalFragment" type="x-shader/x-fragment">
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        uniform vec3 color;
+        uniform float time;
+        void main() {
+            float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewPosition)), 3.0);
+            vec3 finalColor = mix(color * 0.2, color, fresnel);
+            float pulse = sin(time * 2.0) * 0.1 + 0.9;
+            gl_FragColor = vec4(finalColor * pulse, 0.8 * fresnel + 0.1);
+        }
+    </script>
 
-    <!-- Fragment Shader for Neural Particles -->
-    <script id="fragmentShader" type="x-shader/x-fragment">
-    varying float vDistance;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    uniform float time;
-    uniform float activity;
-    uniform float entanglement;
-    uniform float gestureImpact;
-    uniform float voiceImpact;
-    
-    void main() {
-        // Glowing neural effect
-        float strength = distance(gl_PointCoord, vec2(0.5));
-        strength = 1.0 - strength;
-        strength = pow(strength, 3.0);
-        
-        // Gesture impact on color
-        float gesturePulse = sin(time * 4.0 + vPosition.x * 0.05) * 0.5 + 0.5;
-        gesturePulse *= gestureImpact;
-        
-        // Voice impact on color
-        float voicePulse = cos(time * 3.5 + vPosition.z * 0.04) * 0.5 + 0.5;
-        voicePulse *= voiceImpact;
-        
-        // Base neural green with dynamic variations
-        vec3 baseColor = vec3(0.0, 1.0, 0.53);
-        vec3 gestureColor = vec3(0.3, 1.0, 0.8) * gesturePulse;
-        vec3 voiceColor = vec3(0.1, 0.9, 1.0) * voicePulse;
-        
-        // Blend colors based on activity and biometric input
-        vec3 color = mix(baseColor, gestureColor, gestureImpact);
-        color = mix(color, voiceColor, voiceImpact * 0.7);
-        
-        // Add neural firing effect
-        float neuralFire = sin(time * 5.0 + vPosition.x * 0.1 + vPosition.y * 0.05) * 0.5 + 0.5;
-        color += vec3(neuralFire * 0.3, neuralFire * 0.5, 0.0) * (activity + gestureImpact * 0.5);
-        
-        // Distance-based transparency enhanced by voice input
-        float alpha = strength * (800.0 / vDistance) * (0.7 + activity * 0.3 + voiceImpact * 0.4);
-        
-        gl_FragColor = vec4(color, alpha);
-    }
-</script>
+    <script id="meshVertex" type="x-shader/x-vertex">
+        uniform float time;
+        uniform float audio;
+        uniform vec3 gravityPoint;
+        uniform float gravityStrength;
+        varying float vAlpha;
+        void main() {
+            vec3 pos = position;
+            
+            // Audio ripple
+            float dist = length(pos);
+            float ripple = sin(dist * 0.05 - time * 5.0) * audio * 20.0;
+            pos += normal * ripple;
 
-    <!-- Vertex Shader for Mother Cell -->
-    <script id="motherVertexShader" type="x-shader/x-vertex">
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    uniform float time;
-    uniform float gestureImpact;
-    
-    void main() {
-        vUv = uv;
-        vNormal = normalize(normalMatrix * normal);
-        
-        // Pulsing core distortion influenced by gestures
-        vec3 pos = position;
-        float distortion = sin(time * 1.5 + position.y * 0.5) * cos(time * 1.2 + position.z * 0.3) * (0.1 + gestureImpact * 0.2);
-        pos += normal * distortion;
-        
-        vPosition = pos;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-</script>
+            // Gravity interaction
+            vec3 gravityDir = gravityPoint - pos;
+            float gravityDist = length(gravityDir);
+            if(gravityDist < 300.0) {
+                pos += normalize(gravityDir) * (1.0 - gravityDist / 300.0) * gravityStrength * 50.0;
+            }
 
-    <!-- Fragment Shader for Mother Cell -->
-    <script id="motherFragmentShader" type="x-shader/x-fragment">
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    uniform float time;
-    uniform float voiceImpact;
-    
-    void main() {
-        // Hexagonal neural pattern
-        vec2 grid = vec2(20.0, 20.0);
-        vec2 f = fract(vUv * grid);
-        vec2 i = floor(vUv * grid);
-        
-        float pattern = sin(i.x * 0.7 + i.y * 0.5 + time * 2.0) * 0.5 + 0.5;
-        pattern *= (1.0 + voiceImpact * 0.5); // Voice amplifies pattern
-        
-        // Pulsing energy core influenced by voice
-        float pulse = sin(time * 3.0 + vPosition.x * 0.2 + vPosition.y * 0.1) * 0.5 + 0.5;
-        pulse = pow(pulse, 3.0) * (1.0 + voiceImpact * 0.3);
-        
-        // Neural network lines
-        float lines = 1.0 - smoothstep(0.0, 0.1, abs(f.x - 0.5)) * smoothstep(0.0, 0.1, abs(f.y - 0.5));
-        
-        // Core energy color influenced by voice
-        vec3 coreColor = vec3(0.0, 0.8, 0.4);
-        vec3 pulseColor = vec3(0.1, 1.0, 0.6) * pulse;
-        vec3 voiceColor = vec3(0.0, 0.5, 1.0) * voiceImpact;
-        vec3 lineColor = vec3(0.0, 0.3, 0.15);
-        
-        // Combine colors
-        vec3 color = mix(coreColor, pulseColor, 0.7);
-        color = mix(color, voiceColor, voiceImpact * 0.5);
-        color = mix(color, lineColor, lines * 0.3);
-        
-        // Add emission based on pattern
-        color += vec3(0.0, pattern * 0.3, pattern * 0.2);
-        
-        // Rim lighting effect
-        float rim = 1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0)));
-        rim = pow(rim, 3.0);
-        color += vec3(0.0, rim * 0.5, rim * 0.3);
-        
-        gl_FragColor = vec4(color, 0.9);
-    }
-</script>
+            vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+            vAlpha = clamp(1.0 - (length(pos) / 1000.0), 0.0, 1.0);
+            gl_PointSize = (1000.0 / -mvPosition.z) * 1.5;
+            gl_Position = projectionMatrix * mvPosition;
+        }
+    </script>
+
+    <script id="meshFragment" type="x-shader/x-fragment">
+        varying float vAlpha;
+        uniform vec3 color;
+        void main() {
+            float dist = length(gl_PointCoord - vec2(0.5));
+            if(dist > 0.5) discard;
+            gl_FragColor = vec4(color, vAlpha * (1.0 - dist * 2.0));
+        }
+    </script>
 
     <script>
-        // Main initialization
-        let scene, camera, renderer, controls;
-        let motherCell, neuralCloud, tendrils = [], quantumFields = [];
-        let neuralParticles = [];
-        let pointLights = [];
-        let time = 0;
-
-        // Post-processing
-        let composer, bloomPass;
-
-        // Cinematic camera
-        let cameraTargetPos = new THREE.Vector3(0, 200, 800);
-        let cameraNoise = new THREE.Vector3();
-
-        // Biometric tracking systems
-        let handDetector = null;
-        let audioContext = null;
-        let analyser = null;
-        let microphone = null;
-        let voiceDataArray = null;
-
-        // Configuration
         const config = {
-            neuralParticles: 100000,
-            tendrils: 600,
-            quantumFields: 8,
-            pointLights: 12,
-            motherCellComplexity: 20,
-
-            // Biometric settings
-            gestureSensitivity: 0.75,
-            voiceSensitivity: 0.65,
-            cameraFollow: 0.5,
-            biometricLink: 0.85,
-
-            // Current biometric states
-            currentGesture: 'none',
-            gestureImpact: 0,
-            voiceLevel: 0,
-            voiceImpact: 0,
-            handDetected: false,
-            handPosition: { x: 0, y: 0, z: 0 }
+            meshPoints: 50000,
+            color: new THREE.Color('#00f3ff'),
+            gravityStrength: 0,
+            audioLevel: 0,
+            handPos: new THREE.Vector3(1000, 0, 0)
         };
 
-        // UI Elements
-        const loadingElement = document.getElementById('loading');
-        const loadingProgressBar = document.getElementById('loading-progress-bar');
-        const loadingStatus = document.getElementById('loading-status');
-        const streamElement = document.getElementById('stream');
-        const particleCountElement = document.getElementById('particle-count');
-        const gestureTrackStatus = document.getElementById('gesture-track-status');
-        const voiceStatusDisplay = document.getElementById('voice-status-display');
-        const handPresenceElement = document.getElementById('hand-presence');
-        const voicePowerElement = document.getElementById('voice-power');
-        const gestureImpactElement = document.getElementById('gesture-impact');
-        const currentGestureElement = document.getElementById('current-gesture');
-        const currentVoiceElement = document.getElementById('current-voice');
+        let scene, camera, renderer, composer, mesh, core;
+        let handDetector, audioCtx, analyser;
+        let clock = new THREE.Clock();
 
-        // Biometric control elements
-        const gestureSensitivitySlider = document.getElementById('gesture-sensitivity');
-        const voiceSensitivitySlider = document.getElementById('voice-sensitivity');
-        const cameraFollowSlider = document.getElementById('camera-follow');
-        const biometricLinkSlider = document.getElementById('biometric-link');
-        const audioToggle = document.getElementById('audio-toggle');
+        function init() {
+            setupThree();
+            createQuantumMesh();
+            createCrystalCore();
+            setupPostProcessing();
+            animate();
 
-        // Camera and visualizer elements
-        const cameraFeed = document.getElementById('camera-feed');
-        const cameraCanvas = document.getElementById('camera-canvas');
-        const cameraCtx = cameraCanvas.getContext('2d');
-        const voiceVisualizer = document.getElementById('voice-visualizer');
-        const voiceCanvas = document.getElementById('voice-canvas');
-        const voiceCtx = voiceCanvas.getContext('2d');
-
-        // Gesture indicators
-        const gestureHandIndicator = document.getElementById('gesture-hand');
-        const gesturePalmIndicator = document.getElementById('gesture-palm');
-        const voiceWaveEffect = document.getElementById('voice-wave');
-
-        // Permission prompt
-        const permissionPrompt = document.getElementById('permission-prompt');
-        const allowAllBtn = document.getElementById('allow-all');
-        const allowAudioBtn = document.getElementById('allow-audio');
-        const denyAllBtn = document.getElementById('deny-all');
-
-        // Shader uniforms
-        const shaderUniforms = {
-            time: { value: 0 },
-            activity: { value: 0.6 },
-            density: { value: 0.85 },
-            oscillation: { value: 0.4 },
-            entanglement: { value: 0.75 },
-            flux: { value: 0.3 },
-            gestureImpact: { value: 0 },
-            voiceImpact: { value: 0 }
-        };
-
-        // Initialize the scene
-        async function init() {
-            updateLoadingStatus("Checking biometric permissions...", 10);
-
-            // Show permission prompt
             setTimeout(() => {
-                permissionPrompt.style.display = 'block';
+                document.getElementById('permission-modal').style.display = 'flex';
+                updateLoader(100);
             }, 1000);
-
-            // Set up permission buttons
-            allowAllBtn.addEventListener('click', () => requestPermissions(true, true));
-            allowAudioBtn.addEventListener('click', () => requestPermissions(true, false));
-            denyAllBtn.addEventListener('click', () => requestPermissions(false, false));
-
-            // Initialize Three.js scene while waiting for permissions
-            initThreeJS();
         }
 
-        function initThreeJS() {
-            updateLoadingStatus("Creating quantum scene...", 20);
-
-            // Scene
+        function setupThree() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x000000, 500, 3000);
-
-            // Camera
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
-            camera.position.set(0, 200, 800);
+            camera.position.set(0, 0, 800);
 
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('scene-canvas'),
+                antialias: true,
+                alpha: true
+            });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000, 1);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.body.appendChild(renderer.domElement);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            // Post-processing setup
-            const renderScene = new THREE.RenderPass(scene, camera);
-            bloomPass = new THREE.UnrealBloomPass(
-                new THREE.Vector2(window.innerWidth, window.innerHeight),
-                1.5, // Strength
-                0.4, // Radius
-                0.85 // Threshold
-            );
-            bloomPass.threshold = 0.2;
-            bloomPass.strength = 1.2;
-            bloomPass.radius = 0.5;
+            const ambient = new THREE.AmbientLight(0xffffff, 0.1);
+            scene.add(ambient);
 
-            composer = new THREE.EffectComposer(renderer);
-            composer.addPass(renderScene);
-            composer.addPass(bloomPass);
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                composer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
 
-            // Controls
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.rotateSpeed = 0.5;
-            controls.maxDistance = 2000;
-            controls.minDistance = 100;
+        function createQuantumMesh() {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(config.meshPoints * 3);
+            for (let i = 0; i < config.meshPoints * 3; i++) {
+                pos[i] = (Math.random() - 0.5) * 1200;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
 
-            updateLoadingStatus("Generating singularity core...", 30);
-
-            // 1. THE MOTHER CELL (Singularity Core)
-            const motherGeo = new THREE.IcosahedronGeometry(60, config.motherCellComplexity);
-            const motherMat = new THREE.ShaderMaterial({
-                vertexShader: document.getElementById('motherVertexShader').textContent,
-                fragmentShader: document.getElementById('motherFragmentShader').textContent,
+            const mat = new THREE.ShaderMaterial({
                 uniforms: {
                     time: { value: 0 },
-                    gestureImpact: { value: 0 },
-                    voiceImpact: { value: 0 }
+                    audio: { value: 0 },
+                    color: { value: config.color },
+                    gravityPoint: { value: config.handPos },
+                    gravityStrength: { value: 0 }
                 },
+                vertexShader: document.getElementById('meshVertex').textContent,
+                fragmentShader: document.getElementById('meshFragment').textContent,
                 transparent: true,
-                side: THREE.DoubleSide,
-                emissive: 0x001105,
-                emissiveIntensity: 0.5
-            });
-
-            motherCell = new THREE.Mesh(motherGeo, motherMat);
-            motherCell.position.y = 50;
-            motherCell.castShadow = true;
-            motherCell.receiveShadow = true;
-            scene.add(motherCell);
-
-            // Add multiple core layers for depth
-            const innerCoreGeo = new THREE.SphereGeometry(30, 32, 32);
-            const innerCoreMat = new THREE.MeshBasicMaterial({
-                color: 0x00ff88,
-                transparent: true,
-                opacity: 0.2,
-                blending: THREE.AdditiveBlending
-            });
-            const innerLayer = new THREE.Mesh(innerCoreGeo, innerCoreMat);
-            motherCell.add(innerLayer);
-
-            const outerShellGeo = new THREE.IcosahedronGeometry(80, 2);
-            const outerShellMat = new THREE.MeshBasicMaterial({
-                color: 0x00ffaa,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.1,
-                blending: THREE.AdditiveBlending
-            });
-            const outerShell = new THREE.Mesh(outerShellGeo, outerShellMat);
-            motherCell.add(outerShell);
-
-            updateLoadingStatus("Spawning neural particles...", 40);
-
-            // 2. NEURAL CLOUD
-            const cloudCount = config.neuralParticles;
-            const cloudGeo = new THREE.BufferGeometry();
-            const cloudPos = new Float32Array(cloudCount * 3);
-            const cloudVel = new Float32Array(cloudCount * 3);
-            const cloudColor = new Float32Array(cloudCount * 3);
-
-            for (let i = 0; i < cloudCount * 3; i += 3) {
-                const radius = Math.pow(Math.random(), 1.5) * 800;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(2 * Math.random() - 1);
-
-                cloudPos[i] = radius * Math.sin(phi) * Math.cos(theta);
-                cloudPos[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-                cloudPos[i + 2] = radius * Math.cos(phi);
-
-                cloudVel[i] = (Math.random() - 0.5) * 0.5;
-                cloudVel[i + 1] = (Math.random() - 0.5) * 0.5;
-                cloudVel[i + 2] = (Math.random() - 0.5) * 0.5;
-
-                const colorVariation = Math.random() * 0.4;
-                cloudColor[i] = 0.0 + colorVariation * 0.2;
-                cloudColor[i + 1] = 1.0 - colorVariation * 0.3;
-                cloudColor[i + 2] = 0.53 + colorVariation * 0.2;
-            }
-
-            cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPos, 3));
-            cloudGeo.setAttribute('color', new THREE.BufferAttribute(cloudColor, 3));
-
-            const cloudMat = new THREE.ShaderMaterial({
-                vertexShader: document.getElementById('vertexShader').textContent,
-                fragmentShader: document.getElementById('fragmentShader').textContent,
-                uniforms: shaderUniforms,
-                transparent: true,
-                blending: THREE.AdditiveBlending,
-                vertexColors: true
-            });
-
-            neuralCloud = new THREE.Points(cloudGeo, cloudMat);
-            scene.add(neuralCloud);
-
-            neuralParticles = {
-                positions: cloudPos,
-                velocities: cloudVel,
-                originalPositions: new Float32Array(cloudPos)
-            };
-
-            updateLoadingStatus("Weaving synaptic tendrils...", 50);
-
-            // 3. SYNAPTIC TENDRILS
-            const lineCount = config.tendrils;
-            const lineMat = new THREE.LineBasicMaterial({
-                color: 0x00ff88,
-                transparent: true,
-                opacity: 0.2,
-                blending: THREE.AdditiveBlending
-            });
-
-            for (let i = 0; i < lineCount; i++) {
-                const segmentCount = 30 + Math.floor(Math.random() * 30);
-                const geo = new THREE.BufferGeometry();
-                const pts = new Float32Array(segmentCount * 3);
-
-                for (let j = 0; j < segmentCount; j++) {
-                    const ratio = j / segmentCount;
-                    const angle = Math.PI * 2 * Math.random() + ratio * 10;
-                    const radius = 50 + ratio * 400 + Math.sin(ratio * Math.PI) * 200;
-
-                    pts[j * 3] = Math.cos(angle) * radius * (0.8 + Math.random() * 0.4);
-                    pts[j * 3 + 1] = Math.sin(angle * 1.5) * radius * (0.8 + Math.random() * 0.4);
-                    pts[j * 3 + 2] = Math.sin(angle) * radius * (0.8 + Math.random() * 0.4);
-                }
-
-                geo.setAttribute('position', new THREE.BufferAttribute(pts, 3));
-                const line = new THREE.Line(geo, lineMat);
-
-                tendrils.push({
-                    mesh: line,
-                    offset: Math.random() * Math.PI * 2,
-                    speed: 0.5 + Math.random() * 1.5,
-                    segments: segmentCount,
-                    originalPositions: new Float32Array(pts)
-                });
-
-                scene.add(line);
-            }
-
-            updateLoadingStatus("Generating quantum fields...", 65);
-
-            // 4. QUANTUM FIELDS
-            for (let i = 0; i < config.quantumFields; i++) {
-                const fieldRadius = 300 + i * 100;
-                const fieldGeo = new THREE.RingGeometry(fieldRadius, fieldRadius + 50, 64, 1);
-                const fieldMat = new THREE.MeshBasicMaterial({
-                    color: 0x00ff88,
-                    transparent: true,
-                    opacity: 0.03,
-                    side: THREE.DoubleSide,
-                    blending: THREE.AdditiveBlending
-                });
-
-                const field = new THREE.Mesh(fieldGeo, fieldMat);
-                field.rotation.x = Math.PI / 2;
-                field.position.y = -100 + i * 50;
-
-                quantumFields.push({
-                    mesh: field,
-                    rotationSpeed: 0.001 + Math.random() * 0.003,
-                    pulseSpeed: 1 + Math.random() * 2
-                });
-
-                scene.add(field);
-            }
-
-            updateLoadingStatus("Activating neural lighting...", 80);
-
-            // 5. ADVANCED LIGHTING SYSTEM
-            const directionalLight = new THREE.DirectionalLight(0x00ff88, 0.5);
-            directionalLight.position.set(100, 300, 200);
-            directionalLight.castShadow = true;
-            scene.add(directionalLight);
-
-            // Multiple point lights
-            for (let i = 0; i < config.pointLights; i++) {
-                const light = new THREE.PointLight(0x00ff88, 1.5, 500);
-                const angle = (i / config.pointLights) * Math.PI * 2;
-                const radius = 200 + Math.random() * 300;
-
-                light.position.set(
-                    Math.cos(angle) * radius,
-                    50 + Math.random() * 100,
-                    Math.sin(angle) * radius
-                );
-
-                pointLights.push({
-                    light: light,
-                    angle: angle,
-                    radius: radius,
-                    speed: 0.2 + Math.random() * 0.5,
-                    heightVariation: 50 + Math.random() * 100
-                });
-
-                scene.add(light);
-            }
-
-            // Ambient light
-            const ambientLight = new THREE.AmbientLight(0x003322, 0.2);
-            scene.add(ambientLight);
-
-            // Add background stars
-            updateLoadingStatus("Generating starfield...", 90);
-            createStarfield();
-
-            // Event listeners
-            window.addEventListener('resize', onWindowResize);
-            document.addEventListener('keydown', onDocumentKeyDown);
-
-            // Control slider events
-            gestureSensitivitySlider.addEventListener('input', updateBiometricConfig);
-            voiceSensitivitySlider.addEventListener('input', updateBiometricConfig);
-            cameraFollowSlider.addEventListener('input', updateBiometricConfig);
-            biometricLinkSlider.addEventListener('input', updateBiometricConfig);
-
-            audioToggle.addEventListener('click', toggleVoiceControl);
-
-            updateLoadingStatus("Ready for biometric input...", 95);
-
-            // Start animation
-            animate();
-        }
-
-        async function requestPermissions(audioPermission, cameraPermission) {
-            permissionPrompt.style.display = 'none';
-
-            if (audioPermission) {
-                updateLoadingStatus("Initializing voice recognition...", 60);
-                await initVoiceRecognition();
-            }
-
-            if (cameraPermission) {
-                updateLoadingStatus("Initializing gesture tracking...", 70);
-                await initGestureRecognition();
-            }
-
-            // Hide loading screen
-            setTimeout(() => {
-                loadingElement.style.opacity = '0';
-                setTimeout(() => {
-                    loadingElement.style.display = 'none';
-                }, 500);
-            }, 1000);
-        }
-
-        async function initVoiceRecognition() {
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256;
-                voiceDataArray = new Uint8Array(analyser.frequencyBinCount);
-
-                // Get microphone access
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    audio: {
-                        echoCancellation: false,
-                        noiseSuppression: false,
-                        autoGainControl: false
-                    }
-                });
-
-                microphone = audioContext.createMediaStreamSource(stream);
-                microphone.connect(analyser);
-
-                // Initialize voice visualizer
-                voiceCanvas.width = voiceVisualizer.clientWidth;
-                voiceCanvas.height = voiceVisualizer.clientHeight;
-                voiceVisualizer.style.display = 'block';
-
-                // Update UI
-                voiceStatusDisplay.textContent = "ACTIVE";
-                voiceStatusDisplay.style.color = "#00ff88";
-                audioToggle.textContent = "VOICE CONTROL: ON";
-                audioToggle.style.color = "#00ff88";
-
-                console.log("Voice recognition initialized");
-            } catch (error) {
-                console.error("Error initializing voice recognition:", error);
-                voiceStatusDisplay.textContent = "ERROR";
-                voiceStatusDisplay.style.color = "#ff0000";
-            }
-        }
-
-        async function initGestureRecognition() {
-            try {
-                // Set up camera canvas
-                cameraCanvas.width = 320;
-                cameraCanvas.height = 240;
-
-                // Get camera access
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        width: 320,
-                        height: 240,
-                        facingMode: 'user'
-                    }
-                });
-
-                // Show camera feed
-                cameraFeed.style.display = 'block';
-
-                // Create video element for hand tracking
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.width = 320;
-                video.height = 240;
-                video.play();
-
-                // Initialize hand detector
-                const model = handPoseDetection.SupportedModels.MediaPipeHands;
-                const detectorConfig = {
-                    runtime: 'mediapipe',
-                    modelType: 'full',
-                    maxHands: 2,
-                    solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915'
-                };
-
-                handDetector = await handPoseDetection.createDetector(model, detectorConfig);
-
-                // Start hand detection loop
-                detectHands(video);
-
-                // Update UI
-                gestureTrackStatus.textContent = "ACTIVE";
-                gestureTrackStatus.style.color = "#00ff88";
-
-                console.log("Gesture recognition initialized");
-            } catch (error) {
-                console.error("Error initializing gesture recognition:", error);
-                gestureTrackStatus.textContent = "ERROR";
-                gestureTrackStatus.style.color = "#ff0000";
-            }
-        }
-
-        async function detectHands(video) {
-            if (!handDetector) return;
-
-            try {
-                const hands = await handDetector.estimateHands(video);
-
-                // Draw camera feed
-                cameraCtx.drawImage(video, 0, 0, cameraCanvas.width, cameraCanvas.height);
-
-                if (hands.length > 0) {
-                    config.handDetected = true;
-                    const hand = hands[0];
-
-                    // Calculate hand center
-                    let minX = Infinity, maxX = -Infinity;
-                    let minY = Infinity, maxY = -Infinity;
-
-                    hand.keypoints.forEach(keypoint => {
-                        if (keypoint.x < minX) minX = keypoint.x;
-                        if (keypoint.x > maxX) maxX = keypoint.x;
-                        if (keypoint.y < minY) minY = keypoint.y;
-                        if (keypoint.y > maxY) maxY = keypoint.y;
-                    });
-
-                    const handCenterX = (minX + maxX) / 2;
-                    const handCenterY = (minY + maxY) / 2;
-
-                    // Update hand position in 3D space
-                    config.handPosition.x = (handCenterX / cameraCanvas.width - 0.5) * 10;
-                    config.handPosition.y = (0.5 - handCenterY / cameraCanvas.height) * 10;
-                    config.handPosition.z = 5;
-
-                    // Detect gesture based on finger positions
-                    detectGesture(hand.keypoints);
-
-                    // Draw hand landmarks
-                    drawHandLandmarks(hand.keypoints);
-
-                    // Update gesture indicator position
-                    updateGestureIndicator(handCenterX, handCenterY);
-                } else {
-                    config.handDetected = false;
-                    config.currentGesture = 'none';
-                    config.gestureImpact = 0;
-
-                    // Hide gesture indicators
-                    gestureHandIndicator.style.display = 'none';
-                    gesturePalmIndicator.style.display = 'none';
-                }
-
-                // Update UI
-                handPresenceElement.textContent = config.handDetected ? "100%" : "0%";
-
-            } catch (error) {
-                console.error("Error detecting hands:", error);
-            }
-
-            // Continue detection loop
-            requestAnimationFrame(() => detectHands(video));
-        }
-
-        function detectGesture(keypoints) {
-            // Simple gesture detection based on finger distances
-            const thumbTip = keypoints[4];
-            const indexTip = keypoints[8];
-            const middleTip = keypoints[12];
-            const ringTip = keypoints[16];
-            const pinkyTip = keypoints[20];
-            const wrist = keypoints[0];
-
-            // Calculate distances between fingertips
-            const thumbIndexDist = distance(thumbTip, indexTip);
-            const thumbMiddleDist = distance(thumbTip, middleTip);
-            const thumbRingDist = distance(thumbTip, ringTip);
-            const thumbPinkyDist = distance(thumbTip, pinkyTip);
-
-            // Calculate hand openness (distance from wrist to fingertips)
-            const indexWristDist = distance(indexTip, wrist);
-            const middleWristDist = distance(middleTip, wrist);
-            const ringWristDist = distance(ringTip, wrist);
-            const pinkyWristDist = distance(pinkyTip, wrist);
-
-            const avgFingerDist = (indexWristDist + middleWristDist + ringWristDist + pinkyWristDist) / 4;
-
-            // Detect gestures
-            if (thumbIndexDist < 30 && thumbMiddleDist < 30 && thumbRingDist < 30 && thumbPinkyDist < 30) {
-                // All fingers close to thumb = fist
-                config.currentGesture = 'fist';
-                config.gestureImpact = 0.8 * config.gestureSensitivity;
-                gesturePalmIndicator.style.display = 'block';
-                gestureHandIndicator.style.display = 'none';
-            } else if (avgFingerDist > 80) {
-                // Fingers far from wrist = open hand
-                config.currentGesture = 'open';
-                config.gestureImpact = 0.3 * config.gestureSensitivity;
-                gestureHandIndicator.style.display = 'block';
-                gesturePalmIndicator.style.display = 'none';
-            } else if (indexWristDist > 70 && middleWristDist < 50) {
-                // Only index finger extended = pointing
-                config.currentGesture = 'point';
-                config.gestureImpact = 0.5 * config.gestureSensitivity;
-                gestureHandIndicator.style.display = 'block';
-                gesturePalmIndicator.style.display = 'none';
-            } else {
-                // Other/neutral position
-                config.currentGesture = 'wave';
-                config.gestureImpact = 0.6 * config.gestureSensitivity;
-                gestureHandIndicator.style.display = 'block';
-                gesturePalmIndicator.style.display = 'none';
-            }
-
-            // Update UI
-            currentGestureElement.textContent = config.currentGesture.toUpperCase();
-            gestureImpactElement.textContent = Math.round(config.gestureImpact * 100) + '%';
-        }
-
-        function distance(point1, point2) {
-            const dx = point1.x - point2.x;
-            const dy = point1.y - point2.y;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-
-        function drawHandLandmarks(keypoints) {
-            cameraCtx.strokeStyle = '#00ff88';
-            cameraCtx.lineWidth = 2;
-
-            // Draw connections
-            const connections = [
-                [0, 1], [1, 2], [2, 3], [3, 4], // Thumb
-                [0, 5], [5, 6], [6, 7], [7, 8], // Index
-                [0, 9], [9, 10], [10, 11], [11, 12], // Middle
-                [0, 13], [13, 14], [14, 15], [15, 16], // Ring
-                [0, 17], [17, 18], [18, 19], [19, 20] // Pinky
-            ];
-
-            connections.forEach(([i, j]) => {
-                const start = keypoints[i];
-                const end = keypoints[j];
-
-                cameraCtx.beginPath();
-                cameraCtx.moveTo(start.x, start.y);
-                cameraCtx.lineTo(end.x, end.y);
-                cameraCtx.stroke();
-            });
-
-            // Draw keypoints
-            keypoints.forEach(point => {
-                cameraCtx.fillStyle = '#00ff88';
-                cameraCtx.beginPath();
-                cameraCtx.arc(point.x, point.y, 3, 0, Math.PI * 2);
-                cameraCtx.fill();
-            });
-        }
-
-        function updateGestureIndicator(x, y) {
-            const rect = cameraFeed.getBoundingClientRect();
-            gestureHandIndicator.style.left = (rect.left + x - 25) + 'px';
-            gestureHandIndicator.style.top = (rect.top + y - 25) + 'px';
-            gestureHandIndicator.style.display = 'block';
-
-            gesturePalmIndicator.style.left = (rect.left + x - 25) + 'px';
-            gesturePalmIndicator.style.top = (rect.top + y - 25) + 'px';
-        }
-
-        function updateVoiceAnalysis() {
-            if (!analyser || !voiceDataArray) return;
-
-            analyser.getByteFrequencyData(voiceDataArray);
-
-            // Calculate average volume
-            let sum = 0;
-            for (let i = 0; i < voiceDataArray.length; i++) {
-                sum += voiceDataArray[i];
-            }
-            const average = sum / voiceDataArray.length;
-
-            // Calculate voice level (normalized 0-1)
-            config.voiceLevel = Math.min(average / 128, 1);
-            config.voiceImpact = config.voiceLevel * config.voiceSensitivity;
-
-            // Detect voice pitch (simplified)
-            let maxFreq = 0;
-            let maxIndex = 0;
-            for (let i = 0; i < voiceDataArray.length; i++) {
-                if (voiceDataArray[i] > maxFreq) {
-                    maxFreq = voiceDataArray[i];
-                    maxIndex = i;
-                }
-            }
-
-            const pitch = maxIndex / voiceDataArray.length;
-
-            // Update voice status based on level and pitch
-            if (config.voiceLevel > 0.1) {
-                if (pitch > 0.7) {
-                    config.currentGesture = 'high_pitch';
-                    currentVoiceElement.textContent = "HIGH PITCH";
-                } else if (config.voiceLevel > 0.5) {
-                    config.currentGesture = 'loud';
-                    currentVoiceElement.textContent = "LOUD";
-                } else {
-                    config.currentGesture = 'speaking';
-                    currentVoiceElement.textContent = "SPEAKING";
-                }
-
-                // Show voice wave effect
-                voiceWaveEffect.style.display = 'block';
-                voiceWaveEffect.style.background = `radial-gradient(circle, rgba(0, 255, 136, ${config.voiceLevel * 0.3}) 0%, transparent 70%)`;
-            } else {
-                config.currentGesture = 'silent';
-                currentVoiceElement.textContent = "SILENT";
-                config.voiceImpact = 0;
-                voiceWaveEffect.style.display = 'none';
-            }
-
-            // Update UI
-            voicePowerElement.textContent = Math.round(20 * Math.log10(config.voiceLevel * 100 + 1)) + " dB";
-
-            // Update voice visualizer
-            drawVoiceVisualizer();
-        }
-
-        function drawVoiceVisualizer() {
-            if (!voiceCtx || !voiceDataArray) return;
-
-            const width = voiceCanvas.width;
-            const height = voiceCanvas.height;
-
-            // Clear canvas
-            voiceCtx.fillStyle = 'rgba(0, 20, 10, 0.7)';
-            voiceCtx.fillRect(0, 0, width, height);
-
-            // Draw voice waveform
-            const barWidth = width / voiceDataArray.length;
-
-            for (let i = 0; i < voiceDataArray.length; i++) {
-                const barHeight = (voiceDataArray[i] / 255) * height;
-                const x = i * barWidth;
-
-                // Create gradient based on frequency
-                const gradient = voiceCtx.createLinearGradient(0, height - barHeight, 0, height);
-                gradient.addColorStop(0, '#00ff88');
-                gradient.addColorStop(1, '#003322');
-
-                voiceCtx.fillStyle = gradient;
-                voiceCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
-            }
-        }
-
-        function toggleVoiceControl() {
-            if (!audioContext) {
-                initVoiceRecognition();
-            } else if (audioContext.state === 'suspended') {
-                audioContext.resume();
-                audioToggle.textContent = "VOICE CONTROL: ON";
-                audioToggle.style.color = "#00ff88";
-            } else {
-                audioContext.suspend();
-                audioToggle.textContent = "VOICE CONTROL: OFF";
-                audioToggle.style.color = "#888888";
-            }
-        }
-
-        function updateBiometricConfig() {
-            config.gestureSensitivity = gestureSensitivitySlider.value / 100;
-            config.voiceSensitivity = voiceSensitivitySlider.value / 100;
-            config.cameraFollow = cameraFollowSlider.value / 100;
-            config.biometricLink = biometricLinkSlider.value / 100;
-        }
-
-        function createStarfield() {
-            // Starfield
-            const starCount = 5000;
-            const starGeo = new THREE.BufferGeometry();
-            const starPos = new Float32Array(starCount * 3);
-
-            for (let i = 0; i < starCount * 3; i += 3) {
-                starPos[i] = (Math.random() - 0.5) * 3000;
-                starPos[i + 1] = (Math.random() - 0.5) * 3000;
-                starPos[i + 2] = (Math.random() - 0.5) * 3000;
-            }
-
-            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-            const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7, transparent: true });
-            scene.add(new THREE.Points(starGeo, starMat));
-
-            // Nebula Effect (Larger, colored cloud-like particles)
-            const nebulaCount = 200;
-            const nebulaGeo = new THREE.BufferGeometry();
-            const nebulaPos = new Float32Array(nebulaCount * 3);
-            const nebulaColors = new Float32Array(nebulaCount * 3);
-
-            for (let i = 0; i < nebulaCount * 3; i += 3) {
-                nebulaPos[i] = (Math.random() - 0.5) * 2000;
-                nebulaPos[i + 1] = (Math.random() - 0.5) * 2000;
-                nebulaPos[i + 2] = (Math.random() - 0.5) * 2000;
-
-                nebulaColors[i] = 0.0;
-                nebulaColors[i + 1] = 0.5 + Math.random() * 0.5;
-                nebulaColors[i + 2] = 0.3 + Math.random() * 0.3;
-            }
-
-            nebulaGeo.setAttribute('position', new THREE.BufferAttribute(nebulaPos, 3));
-            nebulaGeo.setAttribute('color', new THREE.BufferAttribute(nebulaColors, 3));
-
-            const nebulaMat = new THREE.PointsMaterial({
-                size: 150,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.05,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
             });
-            const nebulaPoints = new THREE.Points(nebulaGeo, nebulaMat);
-            scene.add(nebulaPoints);
 
-            // Subtle rotation for nebula
-            nebulaPoints.onBeforeRender = function () {
-                this.rotation.y += 0.0001;
-            };
+            mesh = new THREE.Points(geo, mat);
+            scene.add(mesh);
         }
 
-        function updateLoadingStatus(message, progress) {
-            loadingStatus.textContent = message;
-            loadingProgressBar.style.width = `${progress}%`;
+        function createCrystalCore() {
+            const geo = new THREE.IcosahedronGeometry(100, 1);
+            const mat = new THREE.ShaderMaterial({
+                uniforms: {
+                    color: { value: config.color },
+                    time: { value: 0 }
+                },
+                vertexShader: document.getElementById('crystalVertex').textContent,
+                fragmentShader: document.getElementById('crystalFragment').textContent,
+                transparent: true,
+                side: THREE.BackSide
+            });
+            core = new THREE.Mesh(geo, mat);
+            scene.add(core);
+
+            const innerGeo = new THREE.IcosahedronGeometry(70, 0);
+            const innerMat = new THREE.MeshBasicMaterial({ color: config.color, wireframe: true, transparent: true, opacity: 0.2 });
+            core.add(new THREE.Mesh(innerGeo, innerMat));
         }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
+        function setupPostProcessing() {
+            composer = new THREE.EffectComposer(renderer);
+            composer.addPass(new THREE.RenderPass(scene, camera));
+
+            const bloom = new THREE.UnrealBloomPass(
+                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                1.5, 0.4, 0.85
+            );
+            bloom.threshold = 0.1;
+            bloom.strength = 1.0;
+            bloom.radius = 0.5;
+            composer.addPass(bloom);
         }
 
-        function onDocumentKeyDown(event) {
-            // Reset view on spacebar
-            if (event.code === 'Space') {
-                camera.position.set(0, 200, 800);
-                controls.target.set(0, 0, 0);
+        async function requestAccess() {
+            document.getElementById('permission-modal').style.display = 'none';
+            document.getElementById('loading-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+
+            await initAudio();
+            await initCamera();
+        }
+
+        async function initAudio() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(stream);
+                analyser = audioCtx.createAnalyser();
+                source.connect(analyser);
+                document.getElementById('btn-audio').textContent = "AUDIO: ACTIVE";
+                document.getElementById('btn-audio').classList.add('active');
+            } catch (e) { console.error(e); }
+        }
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                const model = handPoseDetection.SupportedModels.MediaPipeHands;
+                handDetector = await handPoseDetection.createDetector(model, {
+                    runtime: 'mediapipe',
+                    solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4'
+                });
+
+                document.getElementById('btn-camera').textContent = "CAMERA: ACTIVE";
+                document.getElementById('btn-camera').classList.add('active');
+                document.getElementById('val-tracking').textContent = "BIOMETRIC";
+
+                trackHand(video);
+            } catch (e) { console.error(e); }
+        }
+
+        async function trackHand(video) {
+            const hands = await handDetector.estimateHands(video);
+            if (hands.length > 0) {
+                const hand = hands[0];
+                const keypoint = hand.keypoints[9]; // Middle MCP
+                config.handPos.x = (keypoint.x / 320 - 0.5) * 1000;
+                config.handPos.y = (0.5 - keypoint.y / 240) * 1000;
+                config.handPos.z = 200;
+                config.gravityStrength = 1.5;
+                document.getElementById('val-presence').textContent = "100%";
+                document.getElementById('pb-presence').style.width = "100%";
+            } else {
+                config.gravityStrength = 0;
+                document.getElementById('val-presence').textContent = "0%";
+                document.getElementById('pb-presence').style.width = "0%";
             }
+            requestAnimationFrame(() => trackHand(video));
         }
 
-        function updateHUD() {
-            // Update data stream
-            const streams = [
-                `GESTURE_INPUT: ${config.currentGesture.toUpperCase()}`,
-                `VOICE_POWER: ${Math.round(config.voiceLevel * 100)}%`,
-                `BIOMETRIC_LINK: ${Math.round(config.biometricLink * 100)}%`,
-                `CAMERA_TRACKING: ${config.handDetected ? "ACTIVE" : "INACTIVE"}`,
-                `NEURAL_RESPONSE: ${Math.round((config.gestureImpact + config.voiceImpact) * 50)}%`,
-                `HAND_POSITION: X${config.handPosition.x.toFixed(2)} Y${config.handPosition.y.toFixed(2)}`,
-                `VOICE_FREQ: ${Math.round(config.voiceLevel * 1000)} Hz`,
-                `SYSTEM_IMPACT: ${Math.round((config.gestureImpact + config.voiceImpact) * 100)}%`
-            ];
+        function updateLoader(val) {
+            document.getElementById('loader-bar').style.width = val + '%';
+        }
 
-            // Select random 4 lines for the stream
-            let streamHTML = '';
-            for (let i = 0; i < 4; i++) {
-                const randomIndex = Math.floor(Math.random() * streams.length);
-                streamHTML += streams[randomIndex] + '<br>';
-            }
-
-            streamElement.innerHTML = streamHTML;
-
-            // Update particle count
-            particleCountElement.textContent = config.neuralParticles.toLocaleString();
+        function resetView() {
+            camera.position.set(0, 0, 800);
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            time = Date.now() * 0.001;
+            const time = clock.getElapsedTime();
 
-            // Update shader uniforms
-            shaderUniforms.time.value = time;
-            shaderUniforms.gestureImpact.value = config.gestureImpact * config.biometricLink;
-            shaderUniforms.voiceImpact.value = config.voiceImpact * config.biometricLink;
-
-            // Update voice analysis
-            updateVoiceAnalysis();
-
-            // Mother cell animation (influenced by gestures)
-            motherCell.rotation.y += 0.005 + config.gestureImpact * 0.01;
-            motherCell.rotation.x += 0.002 + config.voiceImpact * 0.005;
-            motherCell.scale.setScalar(1 + Math.sin(time * 1.5) * 0.08 + config.voiceImpact * 0.1);
-
-            // Update mother cell shader uniform
-            motherCell.material.uniforms.time.value = time;
-            motherCell.material.uniforms.gestureImpact.value = config.gestureImpact;
-            motherCell.material.uniforms.voiceImpact.value = config.voiceImpact;
-
-            // Neural cloud animation (influenced by voice)
-            neuralCloud.rotation.y += 0.0005 + config.voiceImpact * 0.001;
-
-            // Animate individual particles based on biometric input
-            const positions = neuralParticles.positions;
-            const velocities = neuralParticles.velocities;
-
-            for (let i = 0; i < positions.length; i += 3) {
-                // Base attraction to center
-                const dx = -positions[i];
-                const dy = -positions[i + 1];
-                const dz = -positions[i + 2];
-
-                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                const force = 0.0001 * distance;
-
-                // Add gesture influence
-                velocities[i] += dx * force + (Math.random() - 0.5) * 0.01 + config.gestureImpact * 0.02;
-                velocities[i + 1] += dy * force + (Math.random() - 0.5) * 0.01 + config.voiceImpact * 0.015;
-                velocities[i + 2] += dz * force + (Math.random() - 0.5) * 0.01;
-
-                // Damping
-                velocities[i] *= 0.98;
-                velocities[i + 1] *= 0.98;
-                velocities[i + 2] *= 0.98;
-
-                // Update positions
-                positions[i] += velocities[i];
-                positions[i + 1] += velocities[i + 1];
-                positions[i + 2] += velocities[i + 2];
+            if (analyser) {
+                const data = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(data);
+                let avg = data.reduce((a, b) => a + b) / data.length;
+                config.audioLevel = avg / 255;
+                document.getElementById('val-audio').textContent = Math.round(avg) + " unit";
+                document.getElementById('pb-audio').style.width = (avg / 128 * 100) + "%";
             }
 
-            neuralCloud.geometry.attributes.position.needsUpdate = true;
+            mesh.material.uniforms.time.value = time;
+            mesh.material.uniforms.audio.value = config.audioLevel;
+            mesh.material.uniforms.gravityStrength.value = config.gravityStrength;
+            mesh.material.uniforms.gravityPoint.value.copy(config.handPos);
 
-            // Tendrils animation (influenced by gestures)
-            tendrils.forEach((t, i) => {
-                const pos = t.mesh.geometry.attributes.position.array;
-                const originalPos = t.originalPositions;
+            core.material.uniforms.time.value = time;
+            core.rotation.y += 0.005 + config.audioLevel * 0.05;
+            core.rotation.z += 0.003;
 
-                for (let j = 0; j < t.segments; j++) {
-                    const ratio = j / t.segments;
-                    const angle = time * t.speed + t.offset + ratio * 3.0;
+            document.getElementById('val-entropy').textContent = (Math.sin(time) * 0.1 + 0.8).toFixed(4);
 
-                    // Base position with oscillation
-                    const baseX = originalPos[j * 3];
-                    const baseY = originalPos[j * 3 + 1];
-                    const baseZ = originalPos[j * 3 + 2];
-
-                    // Add dynamic movement influenced by gestures
-                    const gestureWave = Math.sin(angle * 2) * config.gestureImpact * 40;
-                    const voiceWave = Math.cos(time * 1.7 + i * 0.1) * config.voiceImpact * 30;
-
-                    pos[j * 3] = baseX + gestureWave + voiceWave;
-                    pos[j * 3 + 1] = baseY + Math.sin(angle) * config.gestureImpact * 35;
-                    pos[j * 3 + 2] = baseZ + Math.cos(angle * 1.5) * config.voiceImpact * 25;
-                }
-
-                t.mesh.geometry.attributes.position.needsUpdate = true;
-
-                // Update line opacity based on biometric input
-                t.mesh.material.opacity = 0.15 + config.gestureImpact * 0.2 + config.voiceImpact * 0.1;
-            });
-
-            // Quantum fields animation
-            quantumFields.forEach((field, i) => {
-                field.mesh.rotation.z += field.rotationSpeed * (1 + config.voiceImpact * 0.5);
-
-                // Pulsing opacity influenced by voice
-                const pulse = Math.sin(time * field.pulseSpeed) * 0.5 + 0.5;
-                field.mesh.material.opacity = 0.03 + pulse * 0.04 + config.voiceImpact * 0.03;
-
-                // Slight vertical movement influenced by gestures
-                field.mesh.position.y = -100 + i * 50 + Math.sin(time * 0.5 + i) * (10 + config.gestureImpact * 20);
-            });
-
-            // Point lights animation influenced by biometric input
-            pointLights.forEach((lightObj, i) => {
-                lightObj.angle += lightObj.speed * 0.01 * (1 + config.voiceImpact * 0.3);
-
-                lightObj.light.position.x = Math.cos(lightObj.angle + time * lightObj.speed * 0.5) * lightObj.radius;
-                lightObj.light.position.z = Math.sin(lightObj.angle + time * lightObj.speed * 0.3) * lightObj.radius;
-                lightObj.light.position.y = 50 + Math.sin(time * lightObj.speed + i) * lightObj.heightVariation;
-
-                // Pulsing intensity influenced by voice
-                const intensity = 1.2 + Math.sin(time * 2 + i) * 0.8 + config.voiceImpact * 0.5;
-                lightObj.light.intensity = intensity;
-            });
-
-            // Cinematic Camera Breathing and Dynamics
-            cameraNoise.x = Math.sin(time * 0.5) * 15;
-            cameraNoise.y = Math.cos(time * 0.3) * 10;
-            cameraNoise.z = Math.sin(time * 0.2) * 5;
-
-            if (config.handDetected && config.cameraFollow > 0.1) {
-                cameraTargetPos.x = config.handPosition.x * 50 * config.cameraFollow;
-                cameraTargetPos.y = 200 + config.handPosition.y * 30 * config.cameraFollow;
-                cameraTargetPos.z = 800 - Math.abs(config.handPosition.x) * 20 * config.cameraFollow;
-            } else {
-                cameraTargetPos.set(0, 200, 800);
-            }
-
-            camera.position.x += (cameraTargetPos.x + cameraNoise.x - camera.position.x) * 0.05;
-            camera.position.y += (cameraTargetPos.y + cameraNoise.y - camera.position.y) * 0.05;
-            camera.position.z += (cameraTargetPos.z + cameraNoise.z - camera.position.z) * 0.05;
-
-            if (config.handDetected) {
-                controls.target.x += (config.handPosition.x * 10 - controls.target.x) * 0.03;
-                controls.target.y += (config.handPosition.y * 5 - controls.target.y) * 0.03;
-            }
-
-            // Update controls
-            controls.update();
-
-            // Update HUD
-            if (Math.random() > 0.7) updateHUD();
-
-            // Render via Composer
             composer.render();
         }
 
-        // Start initialization
         init();
     </script>
 </body>
