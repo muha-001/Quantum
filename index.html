@@ -1,51 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>NEURAL MANIFOLD v10.0 - Voice & Gesture Control Active</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap"
+        rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            margin: 0; 
-            background: #000; 
-            overflow: hidden; 
-            font-family: 'Courier New', 'Fira Code', monospace; 
-            color: #00ff88; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            color: #00ff88;
             user-select: none;
         }
-        
-        #hud { 
-            position: absolute; 
-            top: 20px; 
-            left: 20px; 
-            z-index: 100; 
-            pointer-events: none; 
-            border-left: 3px solid #00ff88; 
-            padding-left: 15px; 
-            background: rgba(0, 0, 0, 0.85); 
+
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            pointer-events: none;
+            border-left: 3px solid #00ff88;
+            padding-left: 15px;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
             border-radius: 0 8px 8px 0;
             box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
             max-width: 400px;
         }
-        
+
         #hud h1 {
-            font-size: 18px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
             color: #00ff88;
-            text-shadow: 0 0 10px #00ff88;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
-        
-        .data-stream { 
-            font-size: 11px; 
-            opacity: 0.9; 
+
+        .data-stream {
+            font-size: 11px;
+            opacity: 0.9;
             line-height: 1.6;
             margin-top: 10px;
         }
-        
+
         .status-item {
             display: flex;
             justify-content: space-between;
@@ -53,25 +63,25 @@
             border-bottom: 1px dotted rgba(0, 255, 136, 0.3);
             padding-bottom: 5px;
         }
-        
+
         .status-label {
             color: #00ff88;
         }
-        
+
         .status-value {
             color: #ffffff;
             font-weight: bold;
         }
-        
-        canvas { 
-            display: block; 
+
+        canvas {
+            display: block;
             cursor: grab;
         }
-        
+
         canvas:active {
             cursor: grabbing;
         }
-        
+
         #control-panel {
             position: absolute;
             bottom: 20px;
@@ -85,25 +95,25 @@
             max-width: 300px;
             box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
         }
-        
+
         #control-panel h3 {
             color: #00ff88;
             margin-bottom: 15px;
             text-align: center;
             font-size: 16px;
         }
-        
+
         .control-group {
             margin-bottom: 15px;
         }
-        
+
         .control-label {
             display: block;
             margin-bottom: 5px;
             color: #00ff88;
             font-size: 12px;
         }
-        
+
         .control-slider {
             width: 100%;
             height: 8px;
@@ -112,7 +122,7 @@
             border-radius: 4px;
             outline: none;
         }
-        
+
         .control-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 18px;
@@ -122,7 +132,7 @@
             cursor: pointer;
             box-shadow: 0 0 10px #00ff88;
         }
-        
+
         #overlay {
             position: absolute;
             top: 0;
@@ -133,7 +143,7 @@
             pointer-events: none;
             background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.8) 70%);
         }
-        
+
         #loading {
             position: absolute;
             top: 50%;
@@ -145,7 +155,7 @@
             font-size: 24px;
             text-shadow: 0 0 20px #00ff88;
         }
-        
+
         #loading-progress {
             width: 300px;
             height: 4px;
@@ -154,7 +164,7 @@
             border-radius: 2px;
             overflow: hidden;
         }
-        
+
         #loading-progress-bar {
             height: 100%;
             width: 0%;
@@ -162,7 +172,7 @@
             box-shadow: 0 0 10px #00ff88;
             transition: width 0.3s;
         }
-        
+
         #particle-counter {
             position: absolute;
             top: 20px;
@@ -175,7 +185,7 @@
             border-radius: 8px;
             border: 1px solid rgba(0, 255, 136, 0.3);
         }
-        
+
         #instructions {
             position: absolute;
             bottom: 20px;
@@ -189,32 +199,48 @@
             border: 1px solid rgba(0, 255, 136, 0.3);
             max-width: 300px;
         }
-        
+
         .pulse {
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
         }
-        
+
         .warning {
             color: #ff8800 !important;
         }
-        
+
         .critical {
             color: #ff0000 !important;
             animation: critical-pulse 0.5s infinite;
         }
-        
+
         @keyframes critical-pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+            0% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.3;
+            }
         }
-        
+
         #audio-toggle {
             position: absolute;
             bottom: 20px;
@@ -228,12 +254,12 @@
             cursor: pointer;
             font-family: 'Courier New', monospace;
         }
-        
+
         #audio-toggle:hover {
             background: rgba(0, 40, 20, 0.9);
             box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
-        
+
         #camera-feed {
             position: absolute;
             top: 20px;
@@ -247,13 +273,13 @@
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
             display: none;
         }
-        
+
         #camera-feed canvas {
             width: 100%;
             height: 100%;
             border-radius: 6px;
         }
-        
+
         #gesture-status {
             position: absolute;
             top: 270px;
@@ -269,7 +295,7 @@
             text-align: center;
             min-width: 200px;
         }
-        
+
         #voice-status {
             position: absolute;
             top: 320px;
@@ -285,7 +311,7 @@
             text-align: center;
             min-width: 200px;
         }
-        
+
         #voice-visualizer {
             position: absolute;
             bottom: 180px;
@@ -299,12 +325,12 @@
             padding: 10px;
             display: none;
         }
-        
+
         #voice-visualizer canvas {
             width: 100%;
             height: 100%;
         }
-        
+
         #permission-prompt {
             position: absolute;
             top: 50%;
@@ -319,17 +345,17 @@
             max-width: 500px;
             display: none;
         }
-        
+
         #permission-prompt h2 {
             color: #00ff88;
             margin-bottom: 20px;
         }
-        
+
         #permission-prompt p {
             margin-bottom: 20px;
             line-height: 1.6;
         }
-        
+
         .permission-btn {
             background: rgba(0, 255, 136, 0.2);
             border: 1px solid #00ff88;
@@ -341,12 +367,12 @@
             font-family: 'Courier New', monospace;
             font-size: 16px;
         }
-        
+
         .permission-btn:hover {
             background: rgba(0, 255, 136, 0.4);
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
         }
-        
+
         .gesture-indicator {
             position: absolute;
             width: 50px;
@@ -359,15 +385,15 @@
             display: none;
             box-shadow: 0 0 20px #00ff88;
         }
-        
+
         #gesture-hand {
             display: none;
         }
-        
+
         #gesture-palm {
             display: none;
         }
-        
+
         #voice-wave {
             position: absolute;
             width: 100%;
@@ -380,6 +406,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="hud">
         <h1>NEURAL MANIFOLD v10.0</h1>
@@ -413,11 +440,11 @@
             <span class="status-value" id="gesture-impact">0%</span>
         </div>
     </div>
-    
+
     <div id="particle-counter">
         ACTIVE NEURONS: <span id="particle-count">0</span>
     </div>
-    
+
     <div id="instructions">
         <div>VOICE CONTROLS:</div>
         <div>LOUDER: Increase neural activity</div>
@@ -428,7 +455,7 @@
         <div>FIST: Increase density</div>
         <div>WAVE: Control entanglement</div>
     </div>
-    
+
     <div id="control-panel">
         <h3>BIOMETRIC CONTROLS</h3>
         <div class="control-group">
@@ -448,33 +475,33 @@
             <input type="range" min="1" max="100" value="85" class="control-slider" id="biometric-link">
         </div>
     </div>
-    
+
     <button id="audio-toggle">VOICE CONTROL: OFF</button>
-    
+
     <!-- Camera Feed Elements -->
     <div id="camera-feed">
         <canvas id="camera-canvas"></canvas>
     </div>
-    
+
     <div id="gesture-status">
         GESTURE: <span id="current-gesture">None</span>
     </div>
-    
+
     <div id="voice-status">
         VOICE: <span id="current-voice">Silent</span>
     </div>
-    
+
     <div id="voice-visualizer">
         <canvas id="voice-canvas"></canvas>
     </div>
-    
+
     <!-- Gesture Indicators -->
     <div class="gesture-indicator" id="gesture-hand"></div>
     <div class="gesture-indicator" id="gesture-palm"></div>
-    
+
     <!-- Voice Wave Effect -->
     <div id="voice-wave"></div>
-    
+
     <!-- Permission Prompt -->
     <div id="permission-prompt">
         <h2>BIOMETRIC ACCESS REQUIRED</h2>
@@ -486,9 +513,9 @@
             <button class="permission-btn" id="deny-all">DENY ALL</button>
         </div>
     </div>
-    
+
     <div id="overlay"></div>
-    
+
     <div id="loading">
         <div>INITIALIZING BIOMETRIC INTERFACE...</div>
         <div id="loading-progress">
@@ -497,17 +524,24 @@
         <div id="loading-status" style="font-size: 14px; margin-top: 10px;">LOADING GESTURE RECOGNITION...</div>
     </div>
 
-<!-- Three.js and dependencies -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <!-- Three.js and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
-<!-- TensorFlow.js for hand tracking -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.0/dist/hand-pose-detection.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.min.js"></script>
+    <!-- TensorFlow.js for hand tracking -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.0/dist/hand-pose-detection.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.min.js"></script>
 
-<!-- Vertex Shader for Neural Particles -->
-<script id="vertexShader" type="x-shader/x-vertex">
+    <!-- Vertex Shader for Neural Particles -->
+    <script id="vertexShader" type="x-shader/x-vertex">
     varying vec2 vUv;
     varying float vDistance;
     varying vec3 vPosition;
@@ -555,8 +589,8 @@
     }
 </script>
 
-<!-- Fragment Shader for Neural Particles -->
-<script id="fragmentShader" type="x-shader/x-fragment">
+    <!-- Fragment Shader for Neural Particles -->
+    <script id="fragmentShader" type="x-shader/x-fragment">
     varying float vDistance;
     varying vec3 vPosition;
     varying vec3 vNormal;
@@ -600,8 +634,8 @@
     }
 </script>
 
-<!-- Vertex Shader for Mother Cell -->
-<script id="motherVertexShader" type="x-shader/x-vertex">
+    <!-- Vertex Shader for Mother Cell -->
+    <script id="motherVertexShader" type="x-shader/x-vertex">
     varying vec2 vUv;
     varying vec3 vPosition;
     varying vec3 vNormal;
@@ -622,8 +656,8 @@
     }
 </script>
 
-<!-- Fragment Shader for Mother Cell -->
-<script id="motherFragmentShader" type="x-shader/x-fragment">
+    <!-- Fragment Shader for Mother Cell -->
+    <script id="motherFragmentShader" type="x-shader/x-fragment">
     varying vec2 vUv;
     varying vec3 vPosition;
     varying vec3 vNormal;
@@ -669,935 +703,1008 @@
     }
 </script>
 
-<script>
-    // Main initialization
-    let scene, camera, renderer, controls;
-    let motherCell, neuralCloud, tendrils = [], quantumFields = [];
-    let neuralParticles = [];
-    let pointLights = [];
-    let time = 0;
-    
-    // Biometric tracking systems
-    let handDetector = null;
-    let audioContext = null;
-    let analyser = null;
-    let microphone = null;
-    let voiceDataArray = null;
-    
-    // Configuration
-    const config = {
-        neuralParticles: 100000,
-        tendrils: 600,
-        quantumFields: 8,
-        pointLights: 12,
-        motherCellComplexity: 20,
-        
-        // Biometric settings
-        gestureSensitivity: 0.75,
-        voiceSensitivity: 0.65,
-        cameraFollow: 0.5,
-        biometricLink: 0.85,
-        
-        // Current biometric states
-        currentGesture: 'none',
-        gestureImpact: 0,
-        voiceLevel: 0,
-        voiceImpact: 0,
-        handDetected: false,
-        handPosition: { x: 0, y: 0, z: 0 }
-    };
-    
-    // UI Elements
-    const loadingElement = document.getElementById('loading');
-    const loadingProgressBar = document.getElementById('loading-progress-bar');
-    const loadingStatus = document.getElementById('loading-status');
-    const streamElement = document.getElementById('stream');
-    const particleCountElement = document.getElementById('particle-count');
-    const gestureTrackStatus = document.getElementById('gesture-track-status');
-    const voiceStatusDisplay = document.getElementById('voice-status-display');
-    const handPresenceElement = document.getElementById('hand-presence');
-    const voicePowerElement = document.getElementById('voice-power');
-    const gestureImpactElement = document.getElementById('gesture-impact');
-    const currentGestureElement = document.getElementById('current-gesture');
-    const currentVoiceElement = document.getElementById('current-voice');
-    
-    // Biometric control elements
-    const gestureSensitivitySlider = document.getElementById('gesture-sensitivity');
-    const voiceSensitivitySlider = document.getElementById('voice-sensitivity');
-    const cameraFollowSlider = document.getElementById('camera-follow');
-    const biometricLinkSlider = document.getElementById('biometric-link');
-    const audioToggle = document.getElementById('audio-toggle');
-    
-    // Camera and visualizer elements
-    const cameraFeed = document.getElementById('camera-feed');
-    const cameraCanvas = document.getElementById('camera-canvas');
-    const cameraCtx = cameraCanvas.getContext('2d');
-    const voiceVisualizer = document.getElementById('voice-visualizer');
-    const voiceCanvas = document.getElementById('voice-canvas');
-    const voiceCtx = voiceCanvas.getContext('2d');
-    
-    // Gesture indicators
-    const gestureHandIndicator = document.getElementById('gesture-hand');
-    const gesturePalmIndicator = document.getElementById('gesture-palm');
-    const voiceWaveEffect = document.getElementById('voice-wave');
-    
-    // Permission prompt
-    const permissionPrompt = document.getElementById('permission-prompt');
-    const allowAllBtn = document.getElementById('allow-all');
-    const allowAudioBtn = document.getElementById('allow-audio');
-    const denyAllBtn = document.getElementById('deny-all');
-    
-    // Shader uniforms
-    const shaderUniforms = {
-        time: { value: 0 },
-        activity: { value: 0.6 },
-        density: { value: 0.85 },
-        oscillation: { value: 0.4 },
-        entanglement: { value: 0.75 },
-        flux: { value: 0.3 },
-        gestureImpact: { value: 0 },
-        voiceImpact: { value: 0 }
-    };
-    
-    // Initialize the scene
-    async function init() {
-        updateLoadingStatus("Checking biometric permissions...", 10);
-        
-        // Show permission prompt
-        setTimeout(() => {
-            permissionPrompt.style.display = 'block';
-        }, 1000);
-        
-        // Set up permission buttons
-        allowAllBtn.addEventListener('click', () => requestPermissions(true, true));
-        allowAudioBtn.addEventListener('click', () => requestPermissions(true, false));
-        denyAllBtn.addEventListener('click', () => requestPermissions(false, false));
-        
-        // Initialize Three.js scene while waiting for permissions
-        initThreeJS();
-    }
-    
-    function initThreeJS() {
-        updateLoadingStatus("Creating quantum scene...", 20);
-        
-        // Scene
-        scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x000000, 500, 3000);
-        
-        // Camera
-        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
-        camera.position.set(0, 200, 800);
-        
-        // Renderer
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 1);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        document.body.appendChild(renderer.domElement);
-        
-        // Controls
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.rotateSpeed = 0.5;
-        controls.maxDistance = 2000;
-        controls.minDistance = 100;
-        
-        updateLoadingStatus("Generating singularity core...", 30);
-        
-        // 1. THE MOTHER CELL (Singularity Core)
-        const motherGeo = new THREE.IcosahedronGeometry(60, config.motherCellComplexity);
-        const motherMat = new THREE.ShaderMaterial({
-            vertexShader: document.getElementById('motherVertexShader').textContent,
-            fragmentShader: document.getElementById('motherFragmentShader').textContent,
-            uniforms: {
-                time: { value: 0 },
-                gestureImpact: { value: 0 },
-                voiceImpact: { value: 0 }
-            },
-            transparent: true,
-            side: THREE.DoubleSide,
-            emissive: 0x001105,
-            emissiveIntensity: 0.5
-        });
-        
-        motherCell = new THREE.Mesh(motherGeo, motherMat);
-        motherCell.position.y = 50;
-        motherCell.castShadow = true;
-        motherCell.receiveShadow = true;
-        scene.add(motherCell);
-        
-        // Add inner core
-        const innerCoreGeo = new THREE.SphereGeometry(25, 32, 32);
-        const innerCoreMat = new THREE.MeshBasicMaterial({
-            color: 0x00ff88,
-            transparent: true,
-            opacity: 0.3,
-            blending: THREE.AdditiveBlending
-        });
-        const innerCore = new THREE.Mesh(innerCoreGeo, innerCoreMat);
-        motherCell.add(innerCore);
-        
-        updateLoadingStatus("Spawning neural particles...", 40);
-        
-        // 2. NEURAL CLOUD
-        const cloudCount = config.neuralParticles;
-        const cloudGeo = new THREE.BufferGeometry();
-        const cloudPos = new Float32Array(cloudCount * 3);
-        const cloudVel = new Float32Array(cloudCount * 3);
-        const cloudColor = new Float32Array(cloudCount * 3);
-        
-        for(let i = 0; i < cloudCount * 3; i += 3) {
-            const radius = Math.pow(Math.random(), 1.5) * 800;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            
-            cloudPos[i] = radius * Math.sin(phi) * Math.cos(theta);
-            cloudPos[i+1] = radius * Math.sin(phi) * Math.sin(theta);
-            cloudPos[i+2] = radius * Math.cos(phi);
-            
-            cloudVel[i] = (Math.random() - 0.5) * 0.5;
-            cloudVel[i+1] = (Math.random() - 0.5) * 0.5;
-            cloudVel[i+2] = (Math.random() - 0.5) * 0.5;
-            
-            const colorVariation = Math.random() * 0.4;
-            cloudColor[i] = 0.0 + colorVariation * 0.2;
-            cloudColor[i+1] = 1.0 - colorVariation * 0.3;
-            cloudColor[i+2] = 0.53 + colorVariation * 0.2;
-        }
-        
-        cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPos, 3));
-        cloudGeo.setAttribute('color', new THREE.BufferAttribute(cloudColor, 3));
-        
-        const cloudMat = new THREE.ShaderMaterial({
-            vertexShader: document.getElementById('vertexShader').textContent,
-            fragmentShader: document.getElementById('fragmentShader').textContent,
-            uniforms: shaderUniforms,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            vertexColors: true
-        });
-        
-        neuralCloud = new THREE.Points(cloudGeo, cloudMat);
-        scene.add(neuralCloud);
-        
-        neuralParticles = {
-            positions: cloudPos,
-            velocities: cloudVel,
-            originalPositions: new Float32Array(cloudPos)
+    <script>
+        // Main initialization
+        let scene, camera, renderer, controls;
+        let motherCell, neuralCloud, tendrils = [], quantumFields = [];
+        let neuralParticles = [];
+        let pointLights = [];
+        let time = 0;
+
+        // Post-processing
+        let composer, bloomPass;
+
+        // Cinematic camera
+        let cameraTargetPos = new THREE.Vector3(0, 200, 800);
+        let cameraNoise = new THREE.Vector3();
+
+        // Biometric tracking systems
+        let handDetector = null;
+        let audioContext = null;
+        let analyser = null;
+        let microphone = null;
+        let voiceDataArray = null;
+
+        // Configuration
+        const config = {
+            neuralParticles: 100000,
+            tendrils: 600,
+            quantumFields: 8,
+            pointLights: 12,
+            motherCellComplexity: 20,
+
+            // Biometric settings
+            gestureSensitivity: 0.75,
+            voiceSensitivity: 0.65,
+            cameraFollow: 0.5,
+            biometricLink: 0.85,
+
+            // Current biometric states
+            currentGesture: 'none',
+            gestureImpact: 0,
+            voiceLevel: 0,
+            voiceImpact: 0,
+            handDetected: false,
+            handPosition: { x: 0, y: 0, z: 0 }
         };
-        
-        updateLoadingStatus("Weaving synaptic tendrils...", 50);
-        
-        // 3. SYNAPTIC TENDRILS
-        const lineCount = config.tendrils;
-        const lineMat = new THREE.LineBasicMaterial({ 
-            color: 0x00ff88, 
-            transparent: true, 
-            opacity: 0.2,
-            blending: THREE.AdditiveBlending
-        });
-        
-        for(let i = 0; i < lineCount; i++) {
-            const segmentCount = 30 + Math.floor(Math.random() * 30);
-            const geo = new THREE.BufferGeometry();
-            const pts = new Float32Array(segmentCount * 3);
-            
-            for(let j = 0; j < segmentCount; j++) {
-                const ratio = j / segmentCount;
-                const angle = Math.PI * 2 * Math.random() + ratio * 10;
-                const radius = 50 + ratio * 400 + Math.sin(ratio * Math.PI) * 200;
-                
-                pts[j*3] = Math.cos(angle) * radius * (0.8 + Math.random() * 0.4);
-                pts[j*3+1] = Math.sin(angle * 1.5) * radius * (0.8 + Math.random() * 0.4);
-                pts[j*3+2] = Math.sin(angle) * radius * (0.8 + Math.random() * 0.4);
-            }
-            
-            geo.setAttribute('position', new THREE.BufferAttribute(pts, 3));
-            const line = new THREE.Line(geo, lineMat);
-            
-            tendrils.push({
-                mesh: line,
-                offset: Math.random() * Math.PI * 2,
-                speed: 0.5 + Math.random() * 1.5,
-                segments: segmentCount,
-                originalPositions: new Float32Array(pts)
-            });
-            
-            scene.add(line);
+
+        // UI Elements
+        const loadingElement = document.getElementById('loading');
+        const loadingProgressBar = document.getElementById('loading-progress-bar');
+        const loadingStatus = document.getElementById('loading-status');
+        const streamElement = document.getElementById('stream');
+        const particleCountElement = document.getElementById('particle-count');
+        const gestureTrackStatus = document.getElementById('gesture-track-status');
+        const voiceStatusDisplay = document.getElementById('voice-status-display');
+        const handPresenceElement = document.getElementById('hand-presence');
+        const voicePowerElement = document.getElementById('voice-power');
+        const gestureImpactElement = document.getElementById('gesture-impact');
+        const currentGestureElement = document.getElementById('current-gesture');
+        const currentVoiceElement = document.getElementById('current-voice');
+
+        // Biometric control elements
+        const gestureSensitivitySlider = document.getElementById('gesture-sensitivity');
+        const voiceSensitivitySlider = document.getElementById('voice-sensitivity');
+        const cameraFollowSlider = document.getElementById('camera-follow');
+        const biometricLinkSlider = document.getElementById('biometric-link');
+        const audioToggle = document.getElementById('audio-toggle');
+
+        // Camera and visualizer elements
+        const cameraFeed = document.getElementById('camera-feed');
+        const cameraCanvas = document.getElementById('camera-canvas');
+        const cameraCtx = cameraCanvas.getContext('2d');
+        const voiceVisualizer = document.getElementById('voice-visualizer');
+        const voiceCanvas = document.getElementById('voice-canvas');
+        const voiceCtx = voiceCanvas.getContext('2d');
+
+        // Gesture indicators
+        const gestureHandIndicator = document.getElementById('gesture-hand');
+        const gesturePalmIndicator = document.getElementById('gesture-palm');
+        const voiceWaveEffect = document.getElementById('voice-wave');
+
+        // Permission prompt
+        const permissionPrompt = document.getElementById('permission-prompt');
+        const allowAllBtn = document.getElementById('allow-all');
+        const allowAudioBtn = document.getElementById('allow-audio');
+        const denyAllBtn = document.getElementById('deny-all');
+
+        // Shader uniforms
+        const shaderUniforms = {
+            time: { value: 0 },
+            activity: { value: 0.6 },
+            density: { value: 0.85 },
+            oscillation: { value: 0.4 },
+            entanglement: { value: 0.75 },
+            flux: { value: 0.3 },
+            gestureImpact: { value: 0 },
+            voiceImpact: { value: 0 }
+        };
+
+        // Initialize the scene
+        async function init() {
+            updateLoadingStatus("Checking biometric permissions...", 10);
+
+            // Show permission prompt
+            setTimeout(() => {
+                permissionPrompt.style.display = 'block';
+            }, 1000);
+
+            // Set up permission buttons
+            allowAllBtn.addEventListener('click', () => requestPermissions(true, true));
+            allowAudioBtn.addEventListener('click', () => requestPermissions(true, false));
+            denyAllBtn.addEventListener('click', () => requestPermissions(false, false));
+
+            // Initialize Three.js scene while waiting for permissions
+            initThreeJS();
         }
-        
-        updateLoadingStatus("Generating quantum fields...", 65);
-        
-        // 4. QUANTUM FIELDS
-        for(let i = 0; i < config.quantumFields; i++) {
-            const fieldRadius = 300 + i * 100;
-            const fieldGeo = new THREE.RingGeometry(fieldRadius, fieldRadius + 50, 64, 1);
-            const fieldMat = new THREE.MeshBasicMaterial({
+
+        function initThreeJS() {
+            updateLoadingStatus("Creating quantum scene...", 20);
+
+            // Scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x000000, 500, 3000);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
+            camera.position.set(0, 200, 800);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 1);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.body.appendChild(renderer.domElement);
+
+            // Post-processing setup
+            const renderScene = new THREE.RenderPass(scene, camera);
+            bloomPass = new THREE.UnrealBloomPass(
+                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                1.5, // Strength
+                0.4, // Radius
+                0.85 // Threshold
+            );
+            bloomPass.threshold = 0.2;
+            bloomPass.strength = 1.2;
+            bloomPass.radius = 0.5;
+
+            composer = new THREE.EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 0.5;
+            controls.maxDistance = 2000;
+            controls.minDistance = 100;
+
+            updateLoadingStatus("Generating singularity core...", 30);
+
+            // 1. THE MOTHER CELL (Singularity Core)
+            const motherGeo = new THREE.IcosahedronGeometry(60, config.motherCellComplexity);
+            const motherMat = new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('motherVertexShader').textContent,
+                fragmentShader: document.getElementById('motherFragmentShader').textContent,
+                uniforms: {
+                    time: { value: 0 },
+                    gestureImpact: { value: 0 },
+                    voiceImpact: { value: 0 }
+                },
+                transparent: true,
+                side: THREE.DoubleSide,
+                emissive: 0x001105,
+                emissiveIntensity: 0.5
+            });
+
+            motherCell = new THREE.Mesh(motherGeo, motherMat);
+            motherCell.position.y = 50;
+            motherCell.castShadow = true;
+            motherCell.receiveShadow = true;
+            scene.add(motherCell);
+
+            // Add multiple core layers for depth
+            const innerCoreGeo = new THREE.SphereGeometry(30, 32, 32);
+            const innerCoreMat = new THREE.MeshBasicMaterial({
                 color: 0x00ff88,
                 transparent: true,
-                opacity: 0.03,
-                side: THREE.DoubleSide,
+                opacity: 0.2,
                 blending: THREE.AdditiveBlending
             });
-            
-            const field = new THREE.Mesh(fieldGeo, fieldMat);
-            field.rotation.x = Math.PI / 2;
-            field.position.y = -100 + i * 50;
-            
-            quantumFields.push({
-                mesh: field,
-                rotationSpeed: 0.001 + Math.random() * 0.003,
-                pulseSpeed: 1 + Math.random() * 2
+            const innerLayer = new THREE.Mesh(innerCoreGeo, innerCoreMat);
+            motherCell.add(innerLayer);
+
+            const outerShellGeo = new THREE.IcosahedronGeometry(80, 2);
+            const outerShellMat = new THREE.MeshBasicMaterial({
+                color: 0x00ffaa,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.1,
+                blending: THREE.AdditiveBlending
             });
-            
-            scene.add(field);
-        }
-        
-        updateLoadingStatus("Activating neural lighting...", 80);
-        
-        // 5. ADVANCED LIGHTING SYSTEM
-        const directionalLight = new THREE.DirectionalLight(0x00ff88, 0.5);
-        directionalLight.position.set(100, 300, 200);
-        directionalLight.castShadow = true;
-        scene.add(directionalLight);
-        
-        // Multiple point lights
-        for(let i = 0; i < config.pointLights; i++) {
-            const light = new THREE.PointLight(0x00ff88, 1.5, 500);
-            const angle = (i / config.pointLights) * Math.PI * 2;
-            const radius = 200 + Math.random() * 300;
-            
-            light.position.set(
-                Math.cos(angle) * radius,
-                50 + Math.random() * 100,
-                Math.sin(angle) * radius
-            );
-            
-            pointLights.push({
-                light: light,
-                angle: angle,
-                radius: radius,
-                speed: 0.2 + Math.random() * 0.5,
-                heightVariation: 50 + Math.random() * 100
+            const outerShell = new THREE.Mesh(outerShellGeo, outerShellMat);
+            motherCell.add(outerShell);
+
+            updateLoadingStatus("Spawning neural particles...", 40);
+
+            // 2. NEURAL CLOUD
+            const cloudCount = config.neuralParticles;
+            const cloudGeo = new THREE.BufferGeometry();
+            const cloudPos = new Float32Array(cloudCount * 3);
+            const cloudVel = new Float32Array(cloudCount * 3);
+            const cloudColor = new Float32Array(cloudCount * 3);
+
+            for (let i = 0; i < cloudCount * 3; i += 3) {
+                const radius = Math.pow(Math.random(), 1.5) * 800;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+
+                cloudPos[i] = radius * Math.sin(phi) * Math.cos(theta);
+                cloudPos[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                cloudPos[i + 2] = radius * Math.cos(phi);
+
+                cloudVel[i] = (Math.random() - 0.5) * 0.5;
+                cloudVel[i + 1] = (Math.random() - 0.5) * 0.5;
+                cloudVel[i + 2] = (Math.random() - 0.5) * 0.5;
+
+                const colorVariation = Math.random() * 0.4;
+                cloudColor[i] = 0.0 + colorVariation * 0.2;
+                cloudColor[i + 1] = 1.0 - colorVariation * 0.3;
+                cloudColor[i + 2] = 0.53 + colorVariation * 0.2;
+            }
+
+            cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPos, 3));
+            cloudGeo.setAttribute('color', new THREE.BufferAttribute(cloudColor, 3));
+
+            const cloudMat = new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                uniforms: shaderUniforms,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                vertexColors: true
             });
-            
-            scene.add(light);
-        }
-        
-        // Ambient light
-        const ambientLight = new THREE.AmbientLight(0x003322, 0.2);
-        scene.add(ambientLight);
-        
-        // Add background stars
-        updateLoadingStatus("Generating starfield...", 90);
-        createStarfield();
-        
-        // Event listeners
-        window.addEventListener('resize', onWindowResize);
-        document.addEventListener('keydown', onDocumentKeyDown);
-        
-        // Control slider events
-        gestureSensitivitySlider.addEventListener('input', updateBiometricConfig);
-        voiceSensitivitySlider.addEventListener('input', updateBiometricConfig);
-        cameraFollowSlider.addEventListener('input', updateBiometricConfig);
-        biometricLinkSlider.addEventListener('input', updateBiometricConfig);
-        
-        audioToggle.addEventListener('click', toggleVoiceControl);
-        
-        updateLoadingStatus("Ready for biometric input...", 95);
-        
-        // Start animation
-        animate();
-    }
-    
-    async function requestPermissions(audioPermission, cameraPermission) {
-        permissionPrompt.style.display = 'none';
-        
-        if (audioPermission) {
-            updateLoadingStatus("Initializing voice recognition...", 60);
-            await initVoiceRecognition();
-        }
-        
-        if (cameraPermission) {
-            updateLoadingStatus("Initializing gesture tracking...", 70);
-            await initGestureRecognition();
-        }
-        
-        // Hide loading screen
-        setTimeout(() => {
-            loadingElement.style.opacity = '0';
-            setTimeout(() => {
-                loadingElement.style.display = 'none';
-            }, 500);
-        }, 1000);
-    }
-    
-    async function initVoiceRecognition() {
-        try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 256;
-            voiceDataArray = new Uint8Array(analyser.frequencyBinCount);
-            
-            // Get microphone access
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                audio: {
-                    echoCancellation: false,
-                    noiseSuppression: false,
-                    autoGainControl: false
-                } 
-            });
-            
-            microphone = audioContext.createMediaStreamSource(stream);
-            microphone.connect(analyser);
-            
-            // Initialize voice visualizer
-            voiceCanvas.width = voiceVisualizer.clientWidth;
-            voiceCanvas.height = voiceVisualizer.clientHeight;
-            voiceVisualizer.style.display = 'block';
-            
-            // Update UI
-            voiceStatusDisplay.textContent = "ACTIVE";
-            voiceStatusDisplay.style.color = "#00ff88";
-            audioToggle.textContent = "VOICE CONTROL: ON";
-            audioToggle.style.color = "#00ff88";
-            
-            console.log("Voice recognition initialized");
-        } catch (error) {
-            console.error("Error initializing voice recognition:", error);
-            voiceStatusDisplay.textContent = "ERROR";
-            voiceStatusDisplay.style.color = "#ff0000";
-        }
-    }
-    
-    async function initGestureRecognition() {
-        try {
-            // Set up camera canvas
-            cameraCanvas.width = 320;
-            cameraCanvas.height = 240;
-            
-            // Get camera access
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    width: 320, 
-                    height: 240,
-                    facingMode: 'user'
-                } 
-            });
-            
-            // Show camera feed
-            cameraFeed.style.display = 'block';
-            
-            // Create video element for hand tracking
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.width = 320;
-            video.height = 240;
-            video.play();
-            
-            // Initialize hand detector
-            const model = handPoseDetection.SupportedModels.MediaPipeHands;
-            const detectorConfig = {
-                runtime: 'mediapipe',
-                modelType: 'full',
-                maxHands: 2,
-                solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915'
+
+            neuralCloud = new THREE.Points(cloudGeo, cloudMat);
+            scene.add(neuralCloud);
+
+            neuralParticles = {
+                positions: cloudPos,
+                velocities: cloudVel,
+                originalPositions: new Float32Array(cloudPos)
             };
-            
-            handDetector = await handPoseDetection.createDetector(model, detectorConfig);
-            
-            // Start hand detection loop
-            detectHands(video);
-            
-            // Update UI
-            gestureTrackStatus.textContent = "ACTIVE";
-            gestureTrackStatus.style.color = "#00ff88";
-            
-            console.log("Gesture recognition initialized");
-        } catch (error) {
-            console.error("Error initializing gesture recognition:", error);
-            gestureTrackStatus.textContent = "ERROR";
-            gestureTrackStatus.style.color = "#ff0000";
-        }
-    }
-    
-    async function detectHands(video) {
-        if (!handDetector) return;
-        
-        try {
-            const hands = await handDetector.estimateHands(video);
-            
-            // Draw camera feed
-            cameraCtx.drawImage(video, 0, 0, cameraCanvas.width, cameraCanvas.height);
-            
-            if (hands.length > 0) {
-                config.handDetected = true;
-                const hand = hands[0];
-                
-                // Calculate hand center
-                let minX = Infinity, maxX = -Infinity;
-                let minY = Infinity, maxY = -Infinity;
-                
-                hand.keypoints.forEach(keypoint => {
-                    if (keypoint.x < minX) minX = keypoint.x;
-                    if (keypoint.x > maxX) maxX = keypoint.x;
-                    if (keypoint.y < minY) minY = keypoint.y;
-                    if (keypoint.y > maxY) maxY = keypoint.y;
+
+            updateLoadingStatus("Weaving synaptic tendrils...", 50);
+
+            // 3. SYNAPTIC TENDRILS
+            const lineCount = config.tendrils;
+            const lineMat = new THREE.LineBasicMaterial({
+                color: 0x00ff88,
+                transparent: true,
+                opacity: 0.2,
+                blending: THREE.AdditiveBlending
+            });
+
+            for (let i = 0; i < lineCount; i++) {
+                const segmentCount = 30 + Math.floor(Math.random() * 30);
+                const geo = new THREE.BufferGeometry();
+                const pts = new Float32Array(segmentCount * 3);
+
+                for (let j = 0; j < segmentCount; j++) {
+                    const ratio = j / segmentCount;
+                    const angle = Math.PI * 2 * Math.random() + ratio * 10;
+                    const radius = 50 + ratio * 400 + Math.sin(ratio * Math.PI) * 200;
+
+                    pts[j * 3] = Math.cos(angle) * radius * (0.8 + Math.random() * 0.4);
+                    pts[j * 3 + 1] = Math.sin(angle * 1.5) * radius * (0.8 + Math.random() * 0.4);
+                    pts[j * 3 + 2] = Math.sin(angle) * radius * (0.8 + Math.random() * 0.4);
+                }
+
+                geo.setAttribute('position', new THREE.BufferAttribute(pts, 3));
+                const line = new THREE.Line(geo, lineMat);
+
+                tendrils.push({
+                    mesh: line,
+                    offset: Math.random() * Math.PI * 2,
+                    speed: 0.5 + Math.random() * 1.5,
+                    segments: segmentCount,
+                    originalPositions: new Float32Array(pts)
                 });
-                
-                const handCenterX = (minX + maxX) / 2;
-                const handCenterY = (minY + maxY) / 2;
-                
-                // Update hand position in 3D space
-                config.handPosition.x = (handCenterX / cameraCanvas.width - 0.5) * 10;
-                config.handPosition.y = (0.5 - handCenterY / cameraCanvas.height) * 10;
-                config.handPosition.z = 5;
-                
-                // Detect gesture based on finger positions
-                detectGesture(hand.keypoints);
-                
-                // Draw hand landmarks
-                drawHandLandmarks(hand.keypoints);
-                
-                // Update gesture indicator position
-                updateGestureIndicator(handCenterX, handCenterY);
-            } else {
-                config.handDetected = false;
-                config.currentGesture = 'none';
-                config.gestureImpact = 0;
-                
-                // Hide gesture indicators
+
+                scene.add(line);
+            }
+
+            updateLoadingStatus("Generating quantum fields...", 65);
+
+            // 4. QUANTUM FIELDS
+            for (let i = 0; i < config.quantumFields; i++) {
+                const fieldRadius = 300 + i * 100;
+                const fieldGeo = new THREE.RingGeometry(fieldRadius, fieldRadius + 50, 64, 1);
+                const fieldMat = new THREE.MeshBasicMaterial({
+                    color: 0x00ff88,
+                    transparent: true,
+                    opacity: 0.03,
+                    side: THREE.DoubleSide,
+                    blending: THREE.AdditiveBlending
+                });
+
+                const field = new THREE.Mesh(fieldGeo, fieldMat);
+                field.rotation.x = Math.PI / 2;
+                field.position.y = -100 + i * 50;
+
+                quantumFields.push({
+                    mesh: field,
+                    rotationSpeed: 0.001 + Math.random() * 0.003,
+                    pulseSpeed: 1 + Math.random() * 2
+                });
+
+                scene.add(field);
+            }
+
+            updateLoadingStatus("Activating neural lighting...", 80);
+
+            // 5. ADVANCED LIGHTING SYSTEM
+            const directionalLight = new THREE.DirectionalLight(0x00ff88, 0.5);
+            directionalLight.position.set(100, 300, 200);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Multiple point lights
+            for (let i = 0; i < config.pointLights; i++) {
+                const light = new THREE.PointLight(0x00ff88, 1.5, 500);
+                const angle = (i / config.pointLights) * Math.PI * 2;
+                const radius = 200 + Math.random() * 300;
+
+                light.position.set(
+                    Math.cos(angle) * radius,
+                    50 + Math.random() * 100,
+                    Math.sin(angle) * radius
+                );
+
+                pointLights.push({
+                    light: light,
+                    angle: angle,
+                    radius: radius,
+                    speed: 0.2 + Math.random() * 0.5,
+                    heightVariation: 50 + Math.random() * 100
+                });
+
+                scene.add(light);
+            }
+
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x003322, 0.2);
+            scene.add(ambientLight);
+
+            // Add background stars
+            updateLoadingStatus("Generating starfield...", 90);
+            createStarfield();
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('keydown', onDocumentKeyDown);
+
+            // Control slider events
+            gestureSensitivitySlider.addEventListener('input', updateBiometricConfig);
+            voiceSensitivitySlider.addEventListener('input', updateBiometricConfig);
+            cameraFollowSlider.addEventListener('input', updateBiometricConfig);
+            biometricLinkSlider.addEventListener('input', updateBiometricConfig);
+
+            audioToggle.addEventListener('click', toggleVoiceControl);
+
+            updateLoadingStatus("Ready for biometric input...", 95);
+
+            // Start animation
+            animate();
+        }
+
+        async function requestPermissions(audioPermission, cameraPermission) {
+            permissionPrompt.style.display = 'none';
+
+            if (audioPermission) {
+                updateLoadingStatus("Initializing voice recognition...", 60);
+                await initVoiceRecognition();
+            }
+
+            if (cameraPermission) {
+                updateLoadingStatus("Initializing gesture tracking...", 70);
+                await initGestureRecognition();
+            }
+
+            // Hide loading screen
+            setTimeout(() => {
+                loadingElement.style.opacity = '0';
+                setTimeout(() => {
+                    loadingElement.style.display = 'none';
+                }, 500);
+            }, 1000);
+        }
+
+        async function initVoiceRecognition() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                voiceDataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                // Get microphone access
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                });
+
+                microphone = audioContext.createMediaStreamSource(stream);
+                microphone.connect(analyser);
+
+                // Initialize voice visualizer
+                voiceCanvas.width = voiceVisualizer.clientWidth;
+                voiceCanvas.height = voiceVisualizer.clientHeight;
+                voiceVisualizer.style.display = 'block';
+
+                // Update UI
+                voiceStatusDisplay.textContent = "ACTIVE";
+                voiceStatusDisplay.style.color = "#00ff88";
+                audioToggle.textContent = "VOICE CONTROL: ON";
+                audioToggle.style.color = "#00ff88";
+
+                console.log("Voice recognition initialized");
+            } catch (error) {
+                console.error("Error initializing voice recognition:", error);
+                voiceStatusDisplay.textContent = "ERROR";
+                voiceStatusDisplay.style.color = "#ff0000";
+            }
+        }
+
+        async function initGestureRecognition() {
+            try {
+                // Set up camera canvas
+                cameraCanvas.width = 320;
+                cameraCanvas.height = 240;
+
+                // Get camera access
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: 320,
+                        height: 240,
+                        facingMode: 'user'
+                    }
+                });
+
+                // Show camera feed
+                cameraFeed.style.display = 'block';
+
+                // Create video element for hand tracking
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.width = 320;
+                video.height = 240;
+                video.play();
+
+                // Initialize hand detector
+                const model = handPoseDetection.SupportedModels.MediaPipeHands;
+                const detectorConfig = {
+                    runtime: 'mediapipe',
+                    modelType: 'full',
+                    maxHands: 2,
+                    solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915'
+                };
+
+                handDetector = await handPoseDetection.createDetector(model, detectorConfig);
+
+                // Start hand detection loop
+                detectHands(video);
+
+                // Update UI
+                gestureTrackStatus.textContent = "ACTIVE";
+                gestureTrackStatus.style.color = "#00ff88";
+
+                console.log("Gesture recognition initialized");
+            } catch (error) {
+                console.error("Error initializing gesture recognition:", error);
+                gestureTrackStatus.textContent = "ERROR";
+                gestureTrackStatus.style.color = "#ff0000";
+            }
+        }
+
+        async function detectHands(video) {
+            if (!handDetector) return;
+
+            try {
+                const hands = await handDetector.estimateHands(video);
+
+                // Draw camera feed
+                cameraCtx.drawImage(video, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+                if (hands.length > 0) {
+                    config.handDetected = true;
+                    const hand = hands[0];
+
+                    // Calculate hand center
+                    let minX = Infinity, maxX = -Infinity;
+                    let minY = Infinity, maxY = -Infinity;
+
+                    hand.keypoints.forEach(keypoint => {
+                        if (keypoint.x < minX) minX = keypoint.x;
+                        if (keypoint.x > maxX) maxX = keypoint.x;
+                        if (keypoint.y < minY) minY = keypoint.y;
+                        if (keypoint.y > maxY) maxY = keypoint.y;
+                    });
+
+                    const handCenterX = (minX + maxX) / 2;
+                    const handCenterY = (minY + maxY) / 2;
+
+                    // Update hand position in 3D space
+                    config.handPosition.x = (handCenterX / cameraCanvas.width - 0.5) * 10;
+                    config.handPosition.y = (0.5 - handCenterY / cameraCanvas.height) * 10;
+                    config.handPosition.z = 5;
+
+                    // Detect gesture based on finger positions
+                    detectGesture(hand.keypoints);
+
+                    // Draw hand landmarks
+                    drawHandLandmarks(hand.keypoints);
+
+                    // Update gesture indicator position
+                    updateGestureIndicator(handCenterX, handCenterY);
+                } else {
+                    config.handDetected = false;
+                    config.currentGesture = 'none';
+                    config.gestureImpact = 0;
+
+                    // Hide gesture indicators
+                    gestureHandIndicator.style.display = 'none';
+                    gesturePalmIndicator.style.display = 'none';
+                }
+
+                // Update UI
+                handPresenceElement.textContent = config.handDetected ? "100%" : "0%";
+
+            } catch (error) {
+                console.error("Error detecting hands:", error);
+            }
+
+            // Continue detection loop
+            requestAnimationFrame(() => detectHands(video));
+        }
+
+        function detectGesture(keypoints) {
+            // Simple gesture detection based on finger distances
+            const thumbTip = keypoints[4];
+            const indexTip = keypoints[8];
+            const middleTip = keypoints[12];
+            const ringTip = keypoints[16];
+            const pinkyTip = keypoints[20];
+            const wrist = keypoints[0];
+
+            // Calculate distances between fingertips
+            const thumbIndexDist = distance(thumbTip, indexTip);
+            const thumbMiddleDist = distance(thumbTip, middleTip);
+            const thumbRingDist = distance(thumbTip, ringTip);
+            const thumbPinkyDist = distance(thumbTip, pinkyTip);
+
+            // Calculate hand openness (distance from wrist to fingertips)
+            const indexWristDist = distance(indexTip, wrist);
+            const middleWristDist = distance(middleTip, wrist);
+            const ringWristDist = distance(ringTip, wrist);
+            const pinkyWristDist = distance(pinkyTip, wrist);
+
+            const avgFingerDist = (indexWristDist + middleWristDist + ringWristDist + pinkyWristDist) / 4;
+
+            // Detect gestures
+            if (thumbIndexDist < 30 && thumbMiddleDist < 30 && thumbRingDist < 30 && thumbPinkyDist < 30) {
+                // All fingers close to thumb = fist
+                config.currentGesture = 'fist';
+                config.gestureImpact = 0.8 * config.gestureSensitivity;
+                gesturePalmIndicator.style.display = 'block';
                 gestureHandIndicator.style.display = 'none';
+            } else if (avgFingerDist > 80) {
+                // Fingers far from wrist = open hand
+                config.currentGesture = 'open';
+                config.gestureImpact = 0.3 * config.gestureSensitivity;
+                gestureHandIndicator.style.display = 'block';
+                gesturePalmIndicator.style.display = 'none';
+            } else if (indexWristDist > 70 && middleWristDist < 50) {
+                // Only index finger extended = pointing
+                config.currentGesture = 'point';
+                config.gestureImpact = 0.5 * config.gestureSensitivity;
+                gestureHandIndicator.style.display = 'block';
+                gesturePalmIndicator.style.display = 'none';
+            } else {
+                // Other/neutral position
+                config.currentGesture = 'wave';
+                config.gestureImpact = 0.6 * config.gestureSensitivity;
+                gestureHandIndicator.style.display = 'block';
                 gesturePalmIndicator.style.display = 'none';
             }
-            
+
             // Update UI
-            handPresenceElement.textContent = config.handDetected ? "100%" : "0%";
-            
-        } catch (error) {
-            console.error("Error detecting hands:", error);
+            currentGestureElement.textContent = config.currentGesture.toUpperCase();
+            gestureImpactElement.textContent = Math.round(config.gestureImpact * 100) + '%';
         }
-        
-        // Continue detection loop
-        requestAnimationFrame(() => detectHands(video));
-    }
-    
-    function detectGesture(keypoints) {
-        // Simple gesture detection based on finger distances
-        const thumbTip = keypoints[4];
-        const indexTip = keypoints[8];
-        const middleTip = keypoints[12];
-        const ringTip = keypoints[16];
-        const pinkyTip = keypoints[20];
-        const wrist = keypoints[0];
-        
-        // Calculate distances between fingertips
-        const thumbIndexDist = distance(thumbTip, indexTip);
-        const thumbMiddleDist = distance(thumbTip, middleTip);
-        const thumbRingDist = distance(thumbTip, ringTip);
-        const thumbPinkyDist = distance(thumbTip, pinkyTip);
-        
-        // Calculate hand openness (distance from wrist to fingertips)
-        const indexWristDist = distance(indexTip, wrist);
-        const middleWristDist = distance(middleTip, wrist);
-        const ringWristDist = distance(ringTip, wrist);
-        const pinkyWristDist = distance(pinkyTip, wrist);
-        
-        const avgFingerDist = (indexWristDist + middleWristDist + ringWristDist + pinkyWristDist) / 4;
-        
-        // Detect gestures
-        if (thumbIndexDist < 30 && thumbMiddleDist < 30 && thumbRingDist < 30 && thumbPinkyDist < 30) {
-            // All fingers close to thumb = fist
-            config.currentGesture = 'fist';
-            config.gestureImpact = 0.8 * config.gestureSensitivity;
-            gesturePalmIndicator.style.display = 'block';
-            gestureHandIndicator.style.display = 'none';
-        } else if (avgFingerDist > 80) {
-            // Fingers far from wrist = open hand
-            config.currentGesture = 'open';
-            config.gestureImpact = 0.3 * config.gestureSensitivity;
-            gestureHandIndicator.style.display = 'block';
-            gesturePalmIndicator.style.display = 'none';
-        } else if (indexWristDist > 70 && middleWristDist < 50) {
-            // Only index finger extended = pointing
-            config.currentGesture = 'point';
-            config.gestureImpact = 0.5 * config.gestureSensitivity;
-            gestureHandIndicator.style.display = 'block';
-            gesturePalmIndicator.style.display = 'none';
-        } else {
-            // Other/neutral position
-            config.currentGesture = 'wave';
-            config.gestureImpact = 0.6 * config.gestureSensitivity;
-            gestureHandIndicator.style.display = 'block';
-            gesturePalmIndicator.style.display = 'none';
+
+        function distance(point1, point2) {
+            const dx = point1.x - point2.x;
+            const dy = point1.y - point2.y;
+            return Math.sqrt(dx * dx + dy * dy);
         }
-        
-        // Update UI
-        currentGestureElement.textContent = config.currentGesture.toUpperCase();
-        gestureImpactElement.textContent = Math.round(config.gestureImpact * 100) + '%';
-    }
-    
-    function distance(point1, point2) {
-        const dx = point1.x - point2.x;
-        const dy = point1.y - point2.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-    
-    function drawHandLandmarks(keypoints) {
-        cameraCtx.strokeStyle = '#00ff88';
-        cameraCtx.lineWidth = 2;
-        
-        // Draw connections
-        const connections = [
-            [0, 1], [1, 2], [2, 3], [3, 4], // Thumb
-            [0, 5], [5, 6], [6, 7], [7, 8], // Index
-            [0, 9], [9, 10], [10, 11], [11, 12], // Middle
-            [0, 13], [13, 14], [14, 15], [15, 16], // Ring
-            [0, 17], [17, 18], [18, 19], [19, 20] // Pinky
-        ];
-        
-        connections.forEach(([i, j]) => {
-            const start = keypoints[i];
-            const end = keypoints[j];
-            
-            cameraCtx.beginPath();
-            cameraCtx.moveTo(start.x, start.y);
-            cameraCtx.lineTo(end.x, end.y);
-            cameraCtx.stroke();
-        });
-        
-        // Draw keypoints
-        keypoints.forEach(point => {
-            cameraCtx.fillStyle = '#00ff88';
-            cameraCtx.beginPath();
-            cameraCtx.arc(point.x, point.y, 3, 0, Math.PI * 2);
-            cameraCtx.fill();
-        });
-    }
-    
-    function updateGestureIndicator(x, y) {
-        const rect = cameraFeed.getBoundingClientRect();
-        gestureHandIndicator.style.left = (rect.left + x - 25) + 'px';
-        gestureHandIndicator.style.top = (rect.top + y - 25) + 'px';
-        gestureHandIndicator.style.display = 'block';
-        
-        gesturePalmIndicator.style.left = (rect.left + x - 25) + 'px';
-        gesturePalmIndicator.style.top = (rect.top + y - 25) + 'px';
-    }
-    
-    function updateVoiceAnalysis() {
-        if (!analyser || !voiceDataArray) return;
-        
-        analyser.getByteFrequencyData(voiceDataArray);
-        
-        // Calculate average volume
-        let sum = 0;
-        for (let i = 0; i < voiceDataArray.length; i++) {
-            sum += voiceDataArray[i];
+
+        function drawHandLandmarks(keypoints) {
+            cameraCtx.strokeStyle = '#00ff88';
+            cameraCtx.lineWidth = 2;
+
+            // Draw connections
+            const connections = [
+                [0, 1], [1, 2], [2, 3], [3, 4], // Thumb
+                [0, 5], [5, 6], [6, 7], [7, 8], // Index
+                [0, 9], [9, 10], [10, 11], [11, 12], // Middle
+                [0, 13], [13, 14], [14, 15], [15, 16], // Ring
+                [0, 17], [17, 18], [18, 19], [19, 20] // Pinky
+            ];
+
+            connections.forEach(([i, j]) => {
+                const start = keypoints[i];
+                const end = keypoints[j];
+
+                cameraCtx.beginPath();
+                cameraCtx.moveTo(start.x, start.y);
+                cameraCtx.lineTo(end.x, end.y);
+                cameraCtx.stroke();
+            });
+
+            // Draw keypoints
+            keypoints.forEach(point => {
+                cameraCtx.fillStyle = '#00ff88';
+                cameraCtx.beginPath();
+                cameraCtx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+                cameraCtx.fill();
+            });
         }
-        const average = sum / voiceDataArray.length;
-        
-        // Calculate voice level (normalized 0-1)
-        config.voiceLevel = Math.min(average / 128, 1);
-        config.voiceImpact = config.voiceLevel * config.voiceSensitivity;
-        
-        // Detect voice pitch (simplified)
-        let maxFreq = 0;
-        let maxIndex = 0;
-        for (let i = 0; i < voiceDataArray.length; i++) {
-            if (voiceDataArray[i] > maxFreq) {
-                maxFreq = voiceDataArray[i];
-                maxIndex = i;
+
+        function updateGestureIndicator(x, y) {
+            const rect = cameraFeed.getBoundingClientRect();
+            gestureHandIndicator.style.left = (rect.left + x - 25) + 'px';
+            gestureHandIndicator.style.top = (rect.top + y - 25) + 'px';
+            gestureHandIndicator.style.display = 'block';
+
+            gesturePalmIndicator.style.left = (rect.left + x - 25) + 'px';
+            gesturePalmIndicator.style.top = (rect.top + y - 25) + 'px';
+        }
+
+        function updateVoiceAnalysis() {
+            if (!analyser || !voiceDataArray) return;
+
+            analyser.getByteFrequencyData(voiceDataArray);
+
+            // Calculate average volume
+            let sum = 0;
+            for (let i = 0; i < voiceDataArray.length; i++) {
+                sum += voiceDataArray[i];
             }
-        }
-        
-        const pitch = maxIndex / voiceDataArray.length;
-        
-        // Update voice status based on level and pitch
-        if (config.voiceLevel > 0.1) {
-            if (pitch > 0.7) {
-                config.currentGesture = 'high_pitch';
-                currentVoiceElement.textContent = "HIGH PITCH";
-            } else if (config.voiceLevel > 0.5) {
-                config.currentGesture = 'loud';
-                currentVoiceElement.textContent = "LOUD";
+            const average = sum / voiceDataArray.length;
+
+            // Calculate voice level (normalized 0-1)
+            config.voiceLevel = Math.min(average / 128, 1);
+            config.voiceImpact = config.voiceLevel * config.voiceSensitivity;
+
+            // Detect voice pitch (simplified)
+            let maxFreq = 0;
+            let maxIndex = 0;
+            for (let i = 0; i < voiceDataArray.length; i++) {
+                if (voiceDataArray[i] > maxFreq) {
+                    maxFreq = voiceDataArray[i];
+                    maxIndex = i;
+                }
+            }
+
+            const pitch = maxIndex / voiceDataArray.length;
+
+            // Update voice status based on level and pitch
+            if (config.voiceLevel > 0.1) {
+                if (pitch > 0.7) {
+                    config.currentGesture = 'high_pitch';
+                    currentVoiceElement.textContent = "HIGH PITCH";
+                } else if (config.voiceLevel > 0.5) {
+                    config.currentGesture = 'loud';
+                    currentVoiceElement.textContent = "LOUD";
+                } else {
+                    config.currentGesture = 'speaking';
+                    currentVoiceElement.textContent = "SPEAKING";
+                }
+
+                // Show voice wave effect
+                voiceWaveEffect.style.display = 'block';
+                voiceWaveEffect.style.background = `radial-gradient(circle, rgba(0, 255, 136, ${config.voiceLevel * 0.3}) 0%, transparent 70%)`;
             } else {
-                config.currentGesture = 'speaking';
-                currentVoiceElement.textContent = "SPEAKING";
+                config.currentGesture = 'silent';
+                currentVoiceElement.textContent = "SILENT";
+                config.voiceImpact = 0;
+                voiceWaveEffect.style.display = 'none';
             }
-            
-            // Show voice wave effect
-            voiceWaveEffect.style.display = 'block';
-            voiceWaveEffect.style.background = `radial-gradient(circle, rgba(0, 255, 136, ${config.voiceLevel * 0.3}) 0%, transparent 70%)`;
-        } else {
-            config.currentGesture = 'silent';
-            currentVoiceElement.textContent = "SILENT";
-            config.voiceImpact = 0;
-            voiceWaveEffect.style.display = 'none';
+
+            // Update UI
+            voicePowerElement.textContent = Math.round(20 * Math.log10(config.voiceLevel * 100 + 1)) + " dB";
+
+            // Update voice visualizer
+            drawVoiceVisualizer();
         }
-        
-        // Update UI
-        voicePowerElement.textContent = Math.round(20 * Math.log10(config.voiceLevel * 100 + 1)) + " dB";
-        
-        // Update voice visualizer
-        drawVoiceVisualizer();
-    }
-    
-    function drawVoiceVisualizer() {
-        if (!voiceCtx || !voiceDataArray) return;
-        
-        const width = voiceCanvas.width;
-        const height = voiceCanvas.height;
-        
-        // Clear canvas
-        voiceCtx.fillStyle = 'rgba(0, 20, 10, 0.7)';
-        voiceCtx.fillRect(0, 0, width, height);
-        
-        // Draw voice waveform
-        const barWidth = width / voiceDataArray.length;
-        
-        for (let i = 0; i < voiceDataArray.length; i++) {
-            const barHeight = (voiceDataArray[i] / 255) * height;
-            const x = i * barWidth;
-            
-            // Create gradient based on frequency
-            const gradient = voiceCtx.createLinearGradient(0, height - barHeight, 0, height);
-            gradient.addColorStop(0, '#00ff88');
-            gradient.addColorStop(1, '#003322');
-            
-            voiceCtx.fillStyle = gradient;
-            voiceCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
-        }
-    }
-    
-    function toggleVoiceControl() {
-        if (!audioContext) {
-            initVoiceRecognition();
-        } else if (audioContext.state === 'suspended') {
-            audioContext.resume();
-            audioToggle.textContent = "VOICE CONTROL: ON";
-            audioToggle.style.color = "#00ff88";
-        } else {
-            audioContext.suspend();
-            audioToggle.textContent = "VOICE CONTROL: OFF";
-            audioToggle.style.color = "#888888";
-        }
-    }
-    
-    function updateBiometricConfig() {
-        config.gestureSensitivity = gestureSensitivitySlider.value / 100;
-        config.voiceSensitivity = voiceSensitivitySlider.value / 100;
-        config.cameraFollow = cameraFollowSlider.value / 100;
-        config.biometricLink = biometricLinkSlider.value / 100;
-    }
-    
-    function createStarfield() {
-        const starCount = 5000;
-        const starGeo = new THREE.BufferGeometry();
-        const starPos = new Float32Array(starCount * 3);
-        
-        for(let i = 0; i < starCount * 3; i += 3) {
-            starPos[i] = (Math.random() - 0.5) * 3000;
-            starPos[i+1] = (Math.random() - 0.5) * 3000;
-            starPos[i+2] = (Math.random() - 0.5) * 3000;
-        }
-        
-        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        
-        const starMat = new THREE.PointsMaterial({
-            color: 0xffffff,
-            size: 0.7,
-            transparent: true
-        });
-        
-        const stars = new THREE.Points(starGeo, starMat);
-        scene.add(stars);
-    }
-    
-    function updateLoadingStatus(message, progress) {
-        loadingStatus.textContent = message;
-        loadingProgressBar.style.width = `${progress}%`;
-    }
-    
-    function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-    
-    function onDocumentKeyDown(event) {
-        // Reset view on spacebar
-        if (event.code === 'Space') {
-            camera.position.set(0, 200, 800);
-            controls.target.set(0, 0, 0);
-        }
-    }
-    
-    function updateHUD() {
-        // Update data stream
-        const streams = [
-            `GESTURE_INPUT: ${config.currentGesture.toUpperCase()}`,
-            `VOICE_POWER: ${Math.round(config.voiceLevel * 100)}%`,
-            `BIOMETRIC_LINK: ${Math.round(config.biometricLink * 100)}%`,
-            `CAMERA_TRACKING: ${config.handDetected ? "ACTIVE" : "INACTIVE"}`,
-            `NEURAL_RESPONSE: ${Math.round((config.gestureImpact + config.voiceImpact) * 50)}%`,
-            `HAND_POSITION: X${config.handPosition.x.toFixed(2)} Y${config.handPosition.y.toFixed(2)}`,
-            `VOICE_FREQ: ${Math.round(config.voiceLevel * 1000)} Hz`,
-            `SYSTEM_IMPACT: ${Math.round((config.gestureImpact + config.voiceImpact) * 100)}%`
-        ];
-        
-        // Select random 4 lines for the stream
-        let streamHTML = '';
-        for(let i = 0; i < 4; i++) {
-            const randomIndex = Math.floor(Math.random() * streams.length);
-            streamHTML += streams[randomIndex] + '<br>';
-        }
-        
-        streamElement.innerHTML = streamHTML;
-        
-        // Update particle count
-        particleCountElement.textContent = config.neuralParticles.toLocaleString();
-    }
-    
-    function animate() {
-        requestAnimationFrame(animate);
-        time = Date.now() * 0.001;
-        
-        // Update shader uniforms
-        shaderUniforms.time.value = time;
-        shaderUniforms.gestureImpact.value = config.gestureImpact * config.biometricLink;
-        shaderUniforms.voiceImpact.value = config.voiceImpact * config.biometricLink;
-        
-        // Update voice analysis
-        updateVoiceAnalysis();
-        
-        // Mother cell animation (influenced by gestures)
-        motherCell.rotation.y += 0.005 + config.gestureImpact * 0.01;
-        motherCell.rotation.x += 0.002 + config.voiceImpact * 0.005;
-        motherCell.scale.setScalar(1 + Math.sin(time * 1.5) * 0.08 + config.voiceImpact * 0.1);
-        
-        // Update mother cell shader uniform
-        motherCell.material.uniforms.time.value = time;
-        motherCell.material.uniforms.gestureImpact.value = config.gestureImpact;
-        motherCell.material.uniforms.voiceImpact.value = config.voiceImpact;
-        
-        // Neural cloud animation (influenced by voice)
-        neuralCloud.rotation.y += 0.0005 + config.voiceImpact * 0.001;
-        
-        // Animate individual particles based on biometric input
-        const positions = neuralParticles.positions;
-        const velocities = neuralParticles.velocities;
-        
-        for(let i = 0; i < positions.length; i += 3) {
-            // Base attraction to center
-            const dx = -positions[i];
-            const dy = -positions[i+1];
-            const dz = -positions[i+2];
-            
-            const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
-            const force = 0.0001 * distance;
-            
-            // Add gesture influence
-            velocities[i] += dx * force + (Math.random() - 0.5) * 0.01 + config.gestureImpact * 0.02;
-            velocities[i+1] += dy * force + (Math.random() - 0.5) * 0.01 + config.voiceImpact * 0.015;
-            velocities[i+2] += dz * force + (Math.random() - 0.5) * 0.01;
-            
-            // Damping
-            velocities[i] *= 0.98;
-            velocities[i+1] *= 0.98;
-            velocities[i+2] *= 0.98;
-            
-            // Update positions
-            positions[i] += velocities[i];
-            positions[i+1] += velocities[i+1];
-            positions[i+2] += velocities[i+2];
-        }
-        
-        neuralCloud.geometry.attributes.position.needsUpdate = true;
-        
-        // Tendrils animation (influenced by gestures)
-        tendrils.forEach((t, i) => {
-            const pos = t.mesh.geometry.attributes.position.array;
-            const originalPos = t.originalPositions;
-            
-            for(let j = 0; j < t.segments; j++) {
-                const ratio = j / t.segments;
-                const angle = time * t.speed + t.offset + ratio * 3.0;
-                
-                // Base position with oscillation
-                const baseX = originalPos[j*3];
-                const baseY = originalPos[j*3+1];
-                const baseZ = originalPos[j*3+2];
-                
-                // Add dynamic movement influenced by gestures
-                const gestureWave = Math.sin(angle * 2) * config.gestureImpact * 40;
-                const voiceWave = Math.cos(time * 1.7 + i * 0.1) * config.voiceImpact * 30;
-                
-                pos[j*3] = baseX + gestureWave + voiceWave;
-                pos[j*3+1] = baseY + Math.sin(angle) * config.gestureImpact * 35;
-                pos[j*3+2] = baseZ + Math.cos(angle * 1.5) * config.voiceImpact * 25;
+
+        function drawVoiceVisualizer() {
+            if (!voiceCtx || !voiceDataArray) return;
+
+            const width = voiceCanvas.width;
+            const height = voiceCanvas.height;
+
+            // Clear canvas
+            voiceCtx.fillStyle = 'rgba(0, 20, 10, 0.7)';
+            voiceCtx.fillRect(0, 0, width, height);
+
+            // Draw voice waveform
+            const barWidth = width / voiceDataArray.length;
+
+            for (let i = 0; i < voiceDataArray.length; i++) {
+                const barHeight = (voiceDataArray[i] / 255) * height;
+                const x = i * barWidth;
+
+                // Create gradient based on frequency
+                const gradient = voiceCtx.createLinearGradient(0, height - barHeight, 0, height);
+                gradient.addColorStop(0, '#00ff88');
+                gradient.addColorStop(1, '#003322');
+
+                voiceCtx.fillStyle = gradient;
+                voiceCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
             }
-            
-            t.mesh.geometry.attributes.position.needsUpdate = true;
-            
-            // Update line opacity based on biometric input
-            t.mesh.material.opacity = 0.15 + config.gestureImpact * 0.2 + config.voiceImpact * 0.1;
-        });
-        
-        // Quantum fields animation
-        quantumFields.forEach((field, i) => {
-            field.mesh.rotation.z += field.rotationSpeed * (1 + config.voiceImpact * 0.5);
-            
-            // Pulsing opacity influenced by voice
-            const pulse = Math.sin(time * field.pulseSpeed) * 0.5 + 0.5;
-            field.mesh.material.opacity = 0.03 + pulse * 0.04 + config.voiceImpact * 0.03;
-            
-            // Slight vertical movement influenced by gestures
-            field.mesh.position.y = -100 + i * 50 + Math.sin(time * 0.5 + i) * (10 + config.gestureImpact * 20);
-        });
-        
-        // Point lights animation influenced by biometric input
-        pointLights.forEach((lightObj, i) => {
-            lightObj.angle += lightObj.speed * 0.01 * (1 + config.voiceImpact * 0.3);
-            
-            lightObj.light.position.x = Math.cos(lightObj.angle + time * lightObj.speed * 0.5) * lightObj.radius;
-            lightObj.light.position.z = Math.sin(lightObj.angle + time * lightObj.speed * 0.3) * lightObj.radius;
-            lightObj.light.position.y = 50 + Math.sin(time * lightObj.speed + i) * lightObj.heightVariation;
-            
-            // Pulsing intensity influenced by voice
-            const intensity = 1.2 + Math.sin(time * 2 + i) * 0.8 + config.voiceImpact * 0.5;
-            lightObj.light.intensity = intensity;
-        });
-        
-        // Camera follow hand if enabled
-        if (config.handDetected && config.cameraFollow > 0.1) {
-            const targetX = config.handPosition.x * 50 * config.cameraFollow;
-            const targetY = 200 + config.handPosition.y * 30 * config.cameraFollow;
-            const targetZ = 800 - Math.abs(config.handPosition.x) * 20 * config.cameraFollow;
-            
-            camera.position.x += (targetX - camera.position.x) * 0.05;
-            camera.position.y += (targetY - camera.position.y) * 0.05;
-            camera.position.z += (targetZ - camera.position.z) * 0.05;
-            
-            controls.target.x += (config.handPosition.x * 10 - controls.target.x) * 0.03;
-            controls.target.y += (config.handPosition.y * 5 - controls.target.y) * 0.03;
         }
-        
-        // Update controls
-        controls.update();
-        
-        // Update HUD
-        if(Math.random() > 0.7) updateHUD();
-        
-        // Render
-        renderer.render(scene, camera);
-    }
-    
-    // Start initialization
-    init();
-</script>
+
+        function toggleVoiceControl() {
+            if (!audioContext) {
+                initVoiceRecognition();
+            } else if (audioContext.state === 'suspended') {
+                audioContext.resume();
+                audioToggle.textContent = "VOICE CONTROL: ON";
+                audioToggle.style.color = "#00ff88";
+            } else {
+                audioContext.suspend();
+                audioToggle.textContent = "VOICE CONTROL: OFF";
+                audioToggle.style.color = "#888888";
+            }
+        }
+
+        function updateBiometricConfig() {
+            config.gestureSensitivity = gestureSensitivitySlider.value / 100;
+            config.voiceSensitivity = voiceSensitivitySlider.value / 100;
+            config.cameraFollow = cameraFollowSlider.value / 100;
+            config.biometricLink = biometricLinkSlider.value / 100;
+        }
+
+        function createStarfield() {
+            // Starfield
+            const starCount = 5000;
+            const starGeo = new THREE.BufferGeometry();
+            const starPos = new Float32Array(starCount * 3);
+
+            for (let i = 0; i < starCount * 3; i += 3) {
+                starPos[i] = (Math.random() - 0.5) * 3000;
+                starPos[i + 1] = (Math.random() - 0.5) * 3000;
+                starPos[i + 2] = (Math.random() - 0.5) * 3000;
+            }
+
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7, transparent: true });
+            scene.add(new THREE.Points(starGeo, starMat));
+
+            // Nebula Effect (Larger, colored cloud-like particles)
+            const nebulaCount = 200;
+            const nebulaGeo = new THREE.BufferGeometry();
+            const nebulaPos = new Float32Array(nebulaCount * 3);
+            const nebulaColors = new Float32Array(nebulaCount * 3);
+
+            for (let i = 0; i < nebulaCount * 3; i += 3) {
+                nebulaPos[i] = (Math.random() - 0.5) * 2000;
+                nebulaPos[i + 1] = (Math.random() - 0.5) * 2000;
+                nebulaPos[i + 2] = (Math.random() - 0.5) * 2000;
+
+                nebulaColors[i] = 0.0;
+                nebulaColors[i + 1] = 0.5 + Math.random() * 0.5;
+                nebulaColors[i + 2] = 0.3 + Math.random() * 0.3;
+            }
+
+            nebulaGeo.setAttribute('position', new THREE.BufferAttribute(nebulaPos, 3));
+            nebulaGeo.setAttribute('color', new THREE.BufferAttribute(nebulaColors, 3));
+
+            const nebulaMat = new THREE.PointsMaterial({
+                size: 150,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.05,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const nebulaPoints = new THREE.Points(nebulaGeo, nebulaMat);
+            scene.add(nebulaPoints);
+
+            // Subtle rotation for nebula
+            nebulaPoints.onBeforeRender = function () {
+                this.rotation.y += 0.0001;
+            };
+        }
+
+        function updateLoadingStatus(message, progress) {
+            loadingStatus.textContent = message;
+            loadingProgressBar.style.width = `${progress}%`;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onDocumentKeyDown(event) {
+            // Reset view on spacebar
+            if (event.code === 'Space') {
+                camera.position.set(0, 200, 800);
+                controls.target.set(0, 0, 0);
+            }
+        }
+
+        function updateHUD() {
+            // Update data stream
+            const streams = [
+                `GESTURE_INPUT: ${config.currentGesture.toUpperCase()}`,
+                `VOICE_POWER: ${Math.round(config.voiceLevel * 100)}%`,
+                `BIOMETRIC_LINK: ${Math.round(config.biometricLink * 100)}%`,
+                `CAMERA_TRACKING: ${config.handDetected ? "ACTIVE" : "INACTIVE"}`,
+                `NEURAL_RESPONSE: ${Math.round((config.gestureImpact + config.voiceImpact) * 50)}%`,
+                `HAND_POSITION: X${config.handPosition.x.toFixed(2)} Y${config.handPosition.y.toFixed(2)}`,
+                `VOICE_FREQ: ${Math.round(config.voiceLevel * 1000)} Hz`,
+                `SYSTEM_IMPACT: ${Math.round((config.gestureImpact + config.voiceImpact) * 100)}%`
+            ];
+
+            // Select random 4 lines for the stream
+            let streamHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const randomIndex = Math.floor(Math.random() * streams.length);
+                streamHTML += streams[randomIndex] + '<br>';
+            }
+
+            streamElement.innerHTML = streamHTML;
+
+            // Update particle count
+            particleCountElement.textContent = config.neuralParticles.toLocaleString();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time = Date.now() * 0.001;
+
+            // Update shader uniforms
+            shaderUniforms.time.value = time;
+            shaderUniforms.gestureImpact.value = config.gestureImpact * config.biometricLink;
+            shaderUniforms.voiceImpact.value = config.voiceImpact * config.biometricLink;
+
+            // Update voice analysis
+            updateVoiceAnalysis();
+
+            // Mother cell animation (influenced by gestures)
+            motherCell.rotation.y += 0.005 + config.gestureImpact * 0.01;
+            motherCell.rotation.x += 0.002 + config.voiceImpact * 0.005;
+            motherCell.scale.setScalar(1 + Math.sin(time * 1.5) * 0.08 + config.voiceImpact * 0.1);
+
+            // Update mother cell shader uniform
+            motherCell.material.uniforms.time.value = time;
+            motherCell.material.uniforms.gestureImpact.value = config.gestureImpact;
+            motherCell.material.uniforms.voiceImpact.value = config.voiceImpact;
+
+            // Neural cloud animation (influenced by voice)
+            neuralCloud.rotation.y += 0.0005 + config.voiceImpact * 0.001;
+
+            // Animate individual particles based on biometric input
+            const positions = neuralParticles.positions;
+            const velocities = neuralParticles.velocities;
+
+            for (let i = 0; i < positions.length; i += 3) {
+                // Base attraction to center
+                const dx = -positions[i];
+                const dy = -positions[i + 1];
+                const dz = -positions[i + 2];
+
+                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const force = 0.0001 * distance;
+
+                // Add gesture influence
+                velocities[i] += dx * force + (Math.random() - 0.5) * 0.01 + config.gestureImpact * 0.02;
+                velocities[i + 1] += dy * force + (Math.random() - 0.5) * 0.01 + config.voiceImpact * 0.015;
+                velocities[i + 2] += dz * force + (Math.random() - 0.5) * 0.01;
+
+                // Damping
+                velocities[i] *= 0.98;
+                velocities[i + 1] *= 0.98;
+                velocities[i + 2] *= 0.98;
+
+                // Update positions
+                positions[i] += velocities[i];
+                positions[i + 1] += velocities[i + 1];
+                positions[i + 2] += velocities[i + 2];
+            }
+
+            neuralCloud.geometry.attributes.position.needsUpdate = true;
+
+            // Tendrils animation (influenced by gestures)
+            tendrils.forEach((t, i) => {
+                const pos = t.mesh.geometry.attributes.position.array;
+                const originalPos = t.originalPositions;
+
+                for (let j = 0; j < t.segments; j++) {
+                    const ratio = j / t.segments;
+                    const angle = time * t.speed + t.offset + ratio * 3.0;
+
+                    // Base position with oscillation
+                    const baseX = originalPos[j * 3];
+                    const baseY = originalPos[j * 3 + 1];
+                    const baseZ = originalPos[j * 3 + 2];
+
+                    // Add dynamic movement influenced by gestures
+                    const gestureWave = Math.sin(angle * 2) * config.gestureImpact * 40;
+                    const voiceWave = Math.cos(time * 1.7 + i * 0.1) * config.voiceImpact * 30;
+
+                    pos[j * 3] = baseX + gestureWave + voiceWave;
+                    pos[j * 3 + 1] = baseY + Math.sin(angle) * config.gestureImpact * 35;
+                    pos[j * 3 + 2] = baseZ + Math.cos(angle * 1.5) * config.voiceImpact * 25;
+                }
+
+                t.mesh.geometry.attributes.position.needsUpdate = true;
+
+                // Update line opacity based on biometric input
+                t.mesh.material.opacity = 0.15 + config.gestureImpact * 0.2 + config.voiceImpact * 0.1;
+            });
+
+            // Quantum fields animation
+            quantumFields.forEach((field, i) => {
+                field.mesh.rotation.z += field.rotationSpeed * (1 + config.voiceImpact * 0.5);
+
+                // Pulsing opacity influenced by voice
+                const pulse = Math.sin(time * field.pulseSpeed) * 0.5 + 0.5;
+                field.mesh.material.opacity = 0.03 + pulse * 0.04 + config.voiceImpact * 0.03;
+
+                // Slight vertical movement influenced by gestures
+                field.mesh.position.y = -100 + i * 50 + Math.sin(time * 0.5 + i) * (10 + config.gestureImpact * 20);
+            });
+
+            // Point lights animation influenced by biometric input
+            pointLights.forEach((lightObj, i) => {
+                lightObj.angle += lightObj.speed * 0.01 * (1 + config.voiceImpact * 0.3);
+
+                lightObj.light.position.x = Math.cos(lightObj.angle + time * lightObj.speed * 0.5) * lightObj.radius;
+                lightObj.light.position.z = Math.sin(lightObj.angle + time * lightObj.speed * 0.3) * lightObj.radius;
+                lightObj.light.position.y = 50 + Math.sin(time * lightObj.speed + i) * lightObj.heightVariation;
+
+                // Pulsing intensity influenced by voice
+                const intensity = 1.2 + Math.sin(time * 2 + i) * 0.8 + config.voiceImpact * 0.5;
+                lightObj.light.intensity = intensity;
+            });
+
+            // Cinematic Camera Breathing and Dynamics
+            cameraNoise.x = Math.sin(time * 0.5) * 15;
+            cameraNoise.y = Math.cos(time * 0.3) * 10;
+            cameraNoise.z = Math.sin(time * 0.2) * 5;
+
+            if (config.handDetected && config.cameraFollow > 0.1) {
+                cameraTargetPos.x = config.handPosition.x * 50 * config.cameraFollow;
+                cameraTargetPos.y = 200 + config.handPosition.y * 30 * config.cameraFollow;
+                cameraTargetPos.z = 800 - Math.abs(config.handPosition.x) * 20 * config.cameraFollow;
+            } else {
+                cameraTargetPos.set(0, 200, 800);
+            }
+
+            camera.position.x += (cameraTargetPos.x + cameraNoise.x - camera.position.x) * 0.05;
+            camera.position.y += (cameraTargetPos.y + cameraNoise.y - camera.position.y) * 0.05;
+            camera.position.z += (cameraTargetPos.z + cameraNoise.z - camera.position.z) * 0.05;
+
+            if (config.handDetected) {
+                controls.target.x += (config.handPosition.x * 10 - controls.target.x) * 0.03;
+                controls.target.y += (config.handPosition.y * 5 - controls.target.y) * 0.03;
+            }
+
+            // Update controls
+            controls.update();
+
+            // Update HUD
+            if (Math.random() > 0.7) updateHUD();
+
+            // Render via Composer
+            composer.render();
+        }
+
+        // Start initialization
+        init();
+    </script>
 </body>
+
 </html>
