@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SOLAR MANIFOLD - CELESTIAL OBSERVATORY v12.0</title>
+    <title>SOLAR MANIFOLD - REALISTIC SPACE SIMULATOR v13.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Syncopate:wght@400;700&display=swap"
@@ -12,10 +12,8 @@
         :root {
             --primary: #ffd700;
             --secondary: #ffffff;
-            --bg: #000205;
-            --panel-bg: rgba(0, 5, 15, 0.6);
-            --earth: #0088ff;
-            --mars: #ff4400;
+            --bg: #000000;
+            --panel-bg: rgba(0, 0, 0, 0.7);
         }
 
         * {
@@ -33,7 +31,7 @@
             user-select: none;
         }
 
-        #ui-wrapper {
+        #ui-layer {
             position: absolute;
             top: 0;
             left: 0;
@@ -42,76 +40,52 @@
             pointer-events: none;
             z-index: 100;
             display: flex;
-            justify-content: space-between;
-            padding: 40px;
-        }
-
-        .side-panel {
-            width: 340px;
-            display: flex;
             flex-direction: column;
-            gap: 20px;
+            justify-content: space-between;
+            padding: 30px;
         }
 
-        .hud-block {
+        .hud-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            padding: 24px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            padding: 20px;
             pointer-events: auto;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .hud-block:hover {
-            border-color: var(--primary);
-            background: rgba(10, 20, 40, 0.7);
+            border-radius: 2px;
         }
 
         h1 {
             font-family: 'Syncopate', sans-serif;
-            font-size: 13px;
-            letter-spacing: 5px;
-            color: var(--primary);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .planet-info {
             font-size: 12px;
-            line-height: 1.8;
-            opacity: 0.8;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 6px;
+            color: var(--primary);
+            margin-bottom: 15px;
         }
 
-        .stat-row {
+        .stat {
             display: flex;
             justify-content: space-between;
-            margin: 10px 0;
-            font-size: 12px;
-        }
-
-        .stat-label {
-            opacity: 0.5;
-            text-transform: uppercase;
+            margin: 8px 0;
+            font-size: 11px;
             letter-spacing: 1px;
         }
 
-        .stat-value {
-            font-weight: 600;
+        .label {
+            opacity: 0.5;
+        }
+
+        .value {
             color: var(--primary);
+            font-weight: 600;
         }
 
-        .progress-container {
-            height: 2px;
-            background: rgba(255, 255, 255, 0.05);
+        .progress {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
             margin-top: 5px;
-            overflow: hidden;
         }
 
-        .progress-bar {
+        .bar {
             height: 100%;
             background: var(--primary);
             width: 0%;
@@ -119,58 +93,32 @@
         }
 
         #controls {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             gap: 15px;
-            pointer-events: auto;
-            z-index: 200;
+            margin-top: auto;
+            padding-bottom: 20px;
         }
 
-        .chip {
-            background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            padding: 10px 25px;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 10px;
+            font-family: 'Syncopate';
             cursor: pointer;
             transition: 0.3s;
         }
 
-        .chip:hover {
+        .btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn.active {
             background: var(--primary);
             color: #000;
             border-color: var(--primary);
-        }
-
-        .chip.active {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-
-        #camera-status {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-        }
-
-        #camera-status .label {
-            font-family: 'Syncopate';
-            font-size: 10px;
-            letter-spacing: 3px;
-            opacity: 0.6;
-            margin-bottom: 5px;
-        }
-
-        #camera-status .coordinate {
-            font-size: 14px;
-            color: var(--primary);
         }
 
         #loading {
@@ -184,36 +132,12 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            flex-direction: column;
-        }
-
-        #loader-text {
+            color: var(--primary);
             font-family: 'Syncopate';
-            font-size: 14px;
-            letter-spacing: 15px;
-            margin-bottom: 20px;
-            animation: glow 2s infinite;
+            letter-spacing: 10px;
         }
 
-        @keyframes glow {
-
-            0%,
-            100% {
-                color: #fff;
-                text-shadow: none;
-            }
-
-            50% {
-                color: var(--primary);
-                text-shadow: 0 0 20px var(--primary);
-            }
-        }
-
-        canvas#webgl {
-            display: block;
-        }
-
-        #permission-prompt {
+        #permission-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -224,224 +148,196 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
-        }
-
-        .prompt-box {
-            max-width: 500px;
             text-align: center;
-            padding: 60px;
+        }
+
+        .prompt-card {
+            max-width: 450px;
+            padding: 50px;
             border: 1px solid var(--primary);
-            background: #00050a;
         }
 
-        .prompt-box h2 {
-            font-family: 'Syncopate';
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .prompt-box p {
-            opacity: 0.7;
-            margin-bottom: 30px;
-            font-weight: 300;
-            line-height: 1.6;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: #000;
-            padding: 15px 35px;
-            border: none;
-            font-family: 'Syncopate';
-            font-size: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
+        canvas {
+            display: block;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="loading">
-        <div id="loader-text">CELESTIAL INITIALIZATION</div>
-    </div>
+    <div id="loading">SYNCHRONIZING CELESTIAL DATA...</div>
 
-    <div id="permission-prompt">
-        <div class="prompt-box">
-            <h2>OBSERVATORY ACCESS</h2>
-            <p>Connect your biometric feed to sync the solar manifold with your presence. Voice controls the Sun,
-                gestures orbit the system.</p>
-            <button class="btn" onclick="startSystem()">INITIALIZE FEED</button>
+    <div id="permission-overlay">
+        <div class="prompt-card">
+            <h1>BIOMETRIC SYNC</h1>
+            <p style="font-size: 12px; margin-bottom: 30px; opacity: 0.7;">Initialize biometric authorization to link
+                your presence with the Solar Manifold. Voice modulates solar activity, gestures control orbital
+                mechanics.</p>
+            <button class="btn active" onclick="startSim()">AUTHORIZE SYSTEM</button>
         </div>
     </div>
 
-    <div id="ui-wrapper">
-        <div class="side-panel">
-            <div class="hud-block">
-                <h1>SUN CORE</h1>
-                <div class="stat-row">
-                    <span class="stat-label">ACTIVITY:</span>
-                    <span class="stat-value" id="val-activity">STABLE</span>
+    <div id="ui-layer">
+        <div style="display: flex; justify-content: space-between;">
+            <div class="hud-panel" style="width: 280px;">
+                <h1>SOLAR STATUS</h1>
+                <div class="stat"><span class="label">MAGNITUDE:</span><span class="value" id="val-solar">1.00</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">LUMINOSITY:</span>
-                    <span class="stat-value" id="val-luminosity">1.0X</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="pb-sun"></div>
+                <div class="stat"><span class="label">TEMP:</span><span class="value">5,778 K</span></div>
+                <div class="progress">
+                    <div class="bar" id="pb-solar"></div>
                 </div>
             </div>
 
-            <div class="hud-block">
-                <h1>CELESTIAL LOG</h1>
-                <div id="log-content">
-                    <div class="planet-info">EARTH: 3rd orbital, Habitable</div>
-                    <div class="planet-info">JUPITER: Gas giant, 67 moons detected</div>
-                    <div class="planet-info">SATURN: Rings stable at 124k km</div>
+            <div class="hud-panel" style="width: 200px; text-align: right;">
+                <h1>NAVIGATION</h1>
+                <div class="stat" style="justify-content: flex-end;"><span class="value" id="val-zoom">1.0X ZOOM</span>
                 </div>
+                <div class="stat" style="justify-content: flex-end;"><span class="label" id="val-coord">0, 400,
+                        1000</span></div>
             </div>
         </div>
 
-        <div id="camera-status">
-            <div class="label">COORDINATES</div>
-            <div class="coordinate" id="coords">X: 0.00 Y: 0.00 Z: 800</div>
-        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div id="controls">
+                <div class="btn" id="btn-audio">AUDIO: OFF</div>
+                <div class="btn" id="btn-camera">GESTR: OFF</div>
+            </div>
 
-        <div class="side-panel">
-            <div class="hud-block" style="text-align: right;">
+            <div class="hud-panel" style="width: 280px;">
                 <h1>BIOMETRICS</h1>
-                <div class="stat-row">
-                    <span class="stat-label">G_ZOOM:</span>
-                    <span class="stat-value" id="val-zoom">1.0X</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">V_ENERGY:</span>
-                    <span class="stat-value" id="val-audio">0 dB</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="pb-audio" style="margin-left:auto;"></div>
-                </div>
-            </div>
-
-            <div class="hud-block" style="text-align: right;">
-                <h1>SYSTEM CONFIG</h1>
-                <div class="stat-row">
-                    <span class="stat-label">FPS:</span>
-                    <span class="stat-value">60</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">ENTROPY:</span>
-                    <span class="stat-value">0.0042</span>
+                <div class="stat"><span class="label">ENERGY:</span><span class="value" id="val-energy">0%</span></div>
+                <div class="progress">
+                    <div class="bar" id="pb-energy"></div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div id="controls">
-        <div class="chip" id="btn-audio">AUDIO FEED</div>
-        <div class="chip" id="btn-camera">GESTURE SYNC</div>
-        <div class="chip" onclick="resetView()">RESET VIEW</div>
     </div>
 
     <canvas id="webgl"></canvas>
 
-    <!-- Dependencies -->
+    <!-- Script Blocks -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Lensflare.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.0/dist/hand-pose-detection.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.min.js"></script>
 
-    <!-- Shaders -->
     <script id="sunVertex" type="x-shader/x-vertex">
         varying vec2 vUv;
-        varying vec3 vPosition;
+        varying vec3 vNormal;
         void main() {
             vUv = uv;
-            vPosition = position;
+            vNormal = normalize(normalMatrix * normal);
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     </script>
     <script id="sunFragment" type="x-shader/x-fragment">
         varying vec2 vUv;
-        varying vec3 vPosition;
+        varying vec3 vNormal;
         uniform float time;
         uniform float audio;
 
-        // Simple noise for sun surface
-        float noise(vec3 p) {
-            return fract(sin(dot(p, vec3(12.9898, 78.233, 45.123))) * 43758.5453);
-        }
-
         void main() {
-            float n = noise(vPosition * 0.01 + time * 0.1);
-            vec3 color = mix(vec3(1.0, 0.4, 0.0), vec3(1.0, 0.9, 0.2), n);
-            color += audio * 0.5 * vec3(1.0, 0.2, 0.0);
-            
-            float edge = 1.0 - length(vUv - 0.5) * 2.0;
-            edge = pow(edge, 0.5);
-            
-            gl_FragColor = vec4(color, edge);
+            float pulse = 0.8 + 0.2 * sin(time * 2.0 + vNormal.x * 5.0);
+            vec3 fire = vec3(1.0, 0.4, 0.0) * pulse;
+            fire += audio * 0.5 * vec3(1.0, 0.8, 0.2);
+            gl_FragColor = vec4(fire, 1.0);
+        }
+    </script>
+
+    <script id="atmoVertex" type="x-shader/x-vertex">
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            vNormal = normalize(normalMatrix * normal);
+            vViewPosition = -mvPosition.xyz;
+            gl_Position = projectionMatrix * mvPosition;
+        }
+    </script>
+    <script id="atmoFragment" type="x-shader/x-fragment">
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        uniform vec3 color;
+        void main() {
+            float intensity = pow(0.7 - dot(vNormal, normalize(vViewPosition)), 4.0);
+            gl_FragColor = vec4(color, intensity);
         }
     </script>
 
     <script>
-        // System State
-        let scene, camera, renderer, controls, sun;
-        let planets = [];
-        let audioCtx, analyser, handDetector;
-        let clock = new THREE.Clock();
-
-        const config = {
-            audioLevel: 0,
-            handPos: new THREE.Vector3(),
-            handStable: false,
-            zoom: 1,
-            exposure: 1
+        const TEXTURES = {
+            sun: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/sun.jpg',
+            earth: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg',
+            mars: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/mars.jpg',
+            moon: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/moon_1024.jpg',
+            stars: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/galaxy_starfield.png'
         };
 
-        const planetsData = [
-            { name: 'Mercury', color: '#8c8c8c', size: 4, dist: 140, speed: 1.5, orbit: 0.04 },
-            { name: 'Venus', color: '#e3bb76', size: 9, dist: 190, speed: 1.2, orbit: 0.015 },
-            { name: 'Earth', color: '#2271b3', size: 10, dist: 250, speed: 1.0, orbit: 0.01 },
-            { name: 'Mars', color: '#e27b58', size: 6, dist: 310, speed: 0.8, orbit: 0.008 },
-            { name: 'Jupiter', color: '#d39c7e', size: 24, dist: 420, speed: 0.5, orbit: 0.002 },
-            { name: 'Saturn', color: '#c5ab6e', size: 20, dist: 530, speed: 0.4, orbit: 0.0018, rings: true },
-            { name: 'Uranus', color: '#b5e1e2', size: 14, dist: 620, speed: 0.3, orbit: 0.001 },
-            { name: 'Neptune', color: '#6081ff', size: 13, dist: 700, speed: 0.2, orbit: 0.0008 }
+        let scene, camera, renderer, controls, sun;
+        let planetSystem = [];
+        let audioCtx, analyser, detector;
+        let clock = new THREE.Clock();
+        const loader = new THREE.TextureLoader();
+
+        const config = {
+            audio: 0,
+            hand: new THREE.Vector3(),
+            active: false,
+            zoom: 1
+        };
+
+        const planets = [
+            { name: 'Mercury', color: '#7a7a7a', size: 3.8, dist: 150, orbit: 0.04 },
+            { name: 'Venus', color: '#e3bb76', size: 9.5, dist: 220, orbit: 0.015 },
+            { name: 'Earth', color: '#2271b3', size: 10, dist: 300, orbit: 0.01, texture: TEXTURES.earth, atmo: '#0088ff' },
+            { name: 'Mars', color: '#e27b58', size: 5.3, dist: 400, orbit: 0.008, texture: TEXTURES.mars },
+            { name: 'Jupiter', color: '#d39c7e', size: 28, dist: 600, orbit: 0.002 },
+            { name: 'Saturn', color: '#c5ab6e', size: 24, dist: 800, orbit: 0.0018, rings: true },
+            { name: 'Uranus', color: '#b5e1e2', size: 12, dist: 1000, orbit: 0.001 },
+            { name: 'Neptune', color: '#6081ff', size: 11, dist: 1200, orbit: 0.0008 }
         ];
 
         function init() {
-            setupScene();
+            setupWorld();
             createSun();
-            createPlanets();
-            createStars();
+            createSpacePlanets();
             animate();
 
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('permission-prompt').style.display = 'flex';
-            }, 1500);
+                document.getElementById('permission-overlay').style.display = 'flex';
+            }, 1000);
         }
 
-        function setupScene() {
+        function setupWorld() {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-            camera.position.set(0, 400, 1000);
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 20000);
+            camera.position.set(0, 600, 1500);
 
             renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl'), antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setClearColor(0x000205);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
+            controls.maxDistance = 8000;
+
+            // Skybox
+            const skyGeo = new THREE.SphereGeometry(10000, 32, 32);
+            const skyMat = new THREE.MeshBasicMaterial({
+                map: loader.load(TEXTURES.stars),
+                side: THREE.BackSide
+            });
+            scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+            const ambient = new THREE.AmbientLight(0xffffff, 0.05);
+            scene.add(ambient);
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -451,86 +347,82 @@
         }
 
         function createSun() {
-            const geo = new THREE.SphereGeometry(80, 64, 64);
+            const geo = new THREE.SphereGeometry(100, 64, 64);
             const mat = new THREE.ShaderMaterial({
-                uniforms: {
-                    time: { value: 0 },
-                    audio: { value: 0 }
-                },
+                uniforms: { time: { value: 0 }, audio: { value: 0 } },
                 vertexShader: document.getElementById('sunVertex').textContent,
-                fragmentShader: document.getElementById('sunFragment').textContent,
-                transparent: true
+                fragmentShader: document.getElementById('sunFragment').textContent
             });
             sun = new THREE.Mesh(geo, mat);
             scene.add(sun);
 
-            // Sun Glow
-            const glowGeo = new THREE.SphereGeometry(120, 64, 64);
-            const glowMat = new THREE.MeshBasicMaterial({
-                color: 0xffaa00,
+            const sunLight = new THREE.PointLight(0xffddaa, 2.5, 10000, 1.5);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048;
+            sunLight.shadow.mapSize.height = 2048;
+            scene.add(sunLight);
+
+            // Realistic Glow
+            const atmoGeo = new THREE.SphereGeometry(105, 64, 64);
+            const atmoMat = new THREE.ShaderMaterial({
+                uniforms: { color: { value: new THREE.Color(0xff6600) } },
+                vertexShader: document.getElementById('atmoVertex').textContent,
+                fragmentShader: document.getElementById('atmoFragment').textContent,
                 transparent: true,
-                opacity: 0.1,
                 side: THREE.BackSide
             });
-            sun.add(new THREE.Mesh(glowGeo, glowMat));
-
-            const light = new THREE.PointLight(0xffaa00, 2, 2000);
-            scene.add(light);
+            sun.add(new THREE.Mesh(atmoGeo, atmoMat));
         }
 
-        function createPlanets() {
-            planetsData.forEach(data => {
+        function createSpacePlanets() {
+            planets.forEach(p => {
                 const group = new THREE.Group();
                 scene.add(group);
 
-                // Planet
-                const geo = new THREE.SphereGeometry(data.size, 32, 32);
+                const geo = new THREE.SphereGeometry(p.size, 64, 64);
                 const mat = new THREE.MeshStandardMaterial({
-                    color: data.color,
-                    roughness: 0.7,
-                    metalness: 0.2
+                    color: p.texture ? 0xffffff : p.color,
+                    map: p.texture ? loader.load(p.texture) : null,
+                    roughness: 0.8,
+                    metalness: 0.1
                 });
                 const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.x = data.dist;
+                mesh.position.x = p.dist;
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
                 group.add(mesh);
 
-                // Orbit Ring
-                const orbitGeo = new THREE.RingGeometry(data.dist - 1, data.dist + 1, 128);
-                const orbitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.05, side: THREE.DoubleSide });
-                const orbit = new THREE.Mesh(orbitGeo, orbitMat);
-                orbit.rotation.x = Math.PI / 2;
-                scene.add(orbit);
+                if (p.atmo) {
+                    const atmoGeo = new THREE.SphereGeometry(p.size * 1.05, 64, 64);
+                    const atmoMat = new THREE.ShaderMaterial({
+                        uniforms: { color: { value: new THREE.Color(p.atmo) } },
+                        vertexShader: document.getElementById('atmoVertex').textContent,
+                        fragmentShader: document.getElementById('atmoFragment').textContent,
+                        transparent: true,
+                        side: THREE.BackSide
+                    });
+                    mesh.add(new THREE.Mesh(atmoGeo, atmoMat));
+                }
 
-                if (data.rings) {
-                    const ringGeo = new THREE.RingGeometry(data.size * 1.4, data.size * 2.2, 64);
-                    const ringMat = new THREE.MeshBasicMaterial({ color: data.color, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+                if (p.rings) {
+                    const ringGeo = new THREE.RingGeometry(p.size * 1.5, p.size * 2.5, 64);
+                    const ringMat = new THREE.MeshStandardMaterial({
+                        color: p.color,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.4
+                    });
                     const ring = new THREE.Mesh(ringGeo, ringMat);
-                    ring.rotation.x = Math.PI / 2.2;
+                    ring.rotation.x = Math.PI / 2.4;
                     mesh.add(ring);
                 }
 
-                planets.push({
-                    group: group,
-                    mesh: mesh,
-                    data: data,
-                    angle: Math.random() * Math.PI * 2
-                });
+                planetSystem.push({ group, mesh, data: p, angle: Math.random() * Math.PI * 2 });
             });
         }
 
-        function createStars() {
-            const geo = new THREE.BufferGeometry();
-            const pos = new Float32Array(5000 * 3);
-            for (let i = 0; i < 5000 * 3; i++) {
-                pos[i] = (Math.random() - 0.5) * 8000;
-            }
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5, transparent: true });
-            scene.add(new THREE.Points(geo, mat));
-        }
-
-        async function startSystem() {
-            document.getElementById('permission-prompt').style.display = 'none';
+        async function startSim() {
+            document.getElementById('permission-overlay').style.display = 'none';
             await initAudio();
             await initCamera();
         }
@@ -538,99 +430,77 @@
         async function initAudio() {
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const source = audioCtx.createMediaStreamSource(stream);
+                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const src = audioCtx.createMediaStreamSource(s);
                 analyser = audioCtx.createAnalyser();
-                source.connect(analyser);
+                src.connect(analyser);
                 document.getElementById('btn-audio').classList.add('active');
-            } catch (e) { console.error(e); }
+                document.getElementById('btn-audio').textContent = 'AUDIO: ON';
+            } catch (e) { }
         }
 
         async function initCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
-
-                const model = handPoseDetection.SupportedModels.MediaPipeHands;
-                handDetector = await handPoseDetection.createDetector(model, {
-                    runtime: 'mediapipe',
-                    solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4'
+                const s = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+                const v = document.createElement('video');
+                v.srcObject = s; v.play();
+                const m = handPoseDetection.SupportedModels.MediaPipeHands;
+                detector = await handPoseDetection.createDetector(m, {
+                    runtime: 'mediapipe', solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4'
                 });
-
                 document.getElementById('btn-camera').classList.add('active');
-                trackHands(video);
-            } catch (e) { console.error(e); }
+                document.getElementById('btn-camera').textContent = 'GESTR: ON';
+                track(v);
+            } catch (e) { }
         }
 
-        async function trackHands(video) {
-            const hands = await handDetector.estimateHands(video);
+        async function track(v) {
+            const hands = await detector.estimateHands(v);
             if (hands.length > 0) {
-                const hand = hands[0];
-                const middle = hand.keypoints[9];
-
-                config.handPos.x = (middle.x / 320 - 0.5) * 2;
-                config.handPos.y = (0.5 - middle.y / 240) * 2;
-                config.handStable = true;
-
-                // Zoom detection based on hand height
-                config.zoom = 0.5 + (middle.y / 240) * 2;
-
-                document.getElementById('val-presence').textContent = "MATCH";
-                document.getElementById('val-zoom').textContent = config.zoom.toFixed(1) + "X";
+                const p = hands[0].keypoints[9];
+                config.hand.x = (p.x / 320 - 0.5) * 2;
+                config.hand.y = (0.5 - p.y / 240) * 2;
+                config.zoom = 0.5 + (p.y / 240) * 2;
+                config.active = true;
             } else {
-                config.handStable = false;
-                document.getElementById('val-presence').textContent = "SEARCHING";
+                config.active = false;
             }
-            requestAnimationFrame(() => trackHands(video));
-        }
-
-        function resetView() {
-            camera.position.set(0, 400, 1000);
-            controls.target.set(0, 0, 0);
+            requestAnimationFrame(() => track(v));
         }
 
         function animate() {
             requestAnimationFrame(animate);
             const time = clock.getElapsedTime();
 
-            // Sun Activity
             if (analyser) {
-                const data = new Uint8Array(analyser.frequencyBinCount);
-                analyser.getByteFrequencyData(data);
-                const avg = data.reduce((a, b) => a + b) / data.length;
-                config.audioLevel = avg / 128;
-
-                sun.material.uniforms.audio.value = config.audioLevel;
-                sun.scale.setScalar(1 + config.audioLevel * 0.2);
-
-                document.getElementById('val-audio').textContent = Math.round(avg) + " Hz";
-                document.getElementById('pb-audio').style.width = Math.min(avg, 100) + "%";
-                document.getElementById('pb-sun').style.width = (config.audioLevel * 100) + "%";
-                document.getElementById('val-activity').textContent = avg > 50 ? "VOLATILE" : "STABLE";
-                document.getElementById('val-luminosity').textContent = (1 + config.audioLevel).toFixed(1) + "X";
+                const d = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(d);
+                const avg = d.reduce((a, b) => a + b) / d.length;
+                config.audio = avg / 128;
+                sun.material.uniforms.audio.value = config.audio;
+                sun.scale.setScalar(1 + config.audio * 0.15);
+                document.getElementById('val-solar').textContent = (1 + config.audio).toFixed(2);
+                document.getElementById('pb-solar').style.width = Math.min(avg, 100) + '%';
+                document.getElementById('val-energy').textContent = Math.round(avg / 1.28) + '%';
+                document.getElementById('pb-energy').style.width = Math.min(avg / 1.28, 100) + '%';
             }
             sun.material.uniforms.time.value = time;
 
-            // Planets Orbit
-            planets.forEach(p => {
-                p.angle += p.data.orbit * (1 + config.audioLevel * 0.5);
+            planetSystem.forEach(p => {
+                p.angle += p.data.orbit * (1 + config.audio * 0.5);
                 p.group.rotation.y = p.angle;
-                p.mesh.rotation.y += 0.01 * p.data.speed;
+                p.mesh.rotation.y += 0.005;
             });
 
-            // Camera Biometric Interaction
-            if (config.handStable) {
-                camera.position.x += (config.handPos.x * 500 - camera.position.x) * 0.02;
-                camera.position.y += (400 + config.handPos.y * 200 - camera.position.y) * 0.02;
-
-                const targetZoom = 1000 * config.zoom;
-                camera.position.z += (targetZoom - camera.position.z) * 0.05;
+            if (config.active) {
+                camera.position.x += (config.hand.x * 1500 - camera.position.x) * 0.05;
+                camera.position.y += (600 + config.hand.y * 500 - camera.position.y) * 0.05;
+                const tz = 1500 * config.zoom;
+                camera.position.z += (tz - camera.position.z) * 0.1;
             }
 
-            document.getElementById('coords').textContent =
-                `X: ${camera.position.x.toFixed(0)} Y: ${camera.position.y.toFixed(0)} Z: ${camera.position.z.toFixed(0)}`;
+            document.getElementById('val-zoom').textContent = config.zoom.toFixed(1) + 'X ZOOM';
+            document.getElementById('val-coord').textContent = `${Math.round(camera.position.x)}, ${Math.round(camera.position.y)}, ${Math.round(camera.position.z)}`;
 
             controls.update();
             renderer.render(scene, camera);
