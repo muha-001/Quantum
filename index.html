@@ -3,18 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>QUANTUM MANIFOLD - BIOMETRIC CORE v11.0</title>
+    <title>SOLAR MANIFOLD - CELESTIAL OBSERVATORY v12.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Syncopate:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --primary: #00f3ff;
+            --primary: #ffd700;
             --secondary: #ffffff;
-            --bg: #02040a;
-            --panel-bg: rgba(2, 6, 15, 0.4);
-            --accent: #7000ff;
+            --bg: #000205;
+            --panel-bg: rgba(0, 5, 15, 0.6);
+            --earth: #0088ff;
+            --mars: #ff4400;
         }
 
         * {
@@ -46,7 +47,7 @@
         }
 
         .side-panel {
-            width: 320px;
+            width: 340px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -55,36 +56,46 @@
         .hud-block {
             background: var(--panel-bg);
             backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(0, 243, 255, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.1);
             padding: 24px;
             pointer-events: auto;
+            border-radius: 4px;
             transition: all 0.3s ease;
         }
 
         .hud-block:hover {
-            border-left: 1px solid var(--primary);
-            background: rgba(2, 6, 15, 0.6);
+            border-color: var(--primary);
+            background: rgba(10, 20, 40, 0.7);
         }
 
         h1 {
             font-family: 'Syncopate', sans-serif;
-            font-size: 14px;
-            letter-spacing: 4px;
+            font-size: 13px;
+            letter-spacing: 5px;
             color: var(--primary);
             margin-bottom: 20px;
             text-transform: uppercase;
         }
 
+        .planet-info {
+            font-size: 12px;
+            line-height: 1.8;
+            opacity: 0.8;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 12px 0;
-            font-size: 13px;
+            margin: 10px 0;
+            font-size: 12px;
         }
 
         .stat-label {
-            opacity: 0.6;
-            font-weight: 300;
+            opacity: 0.5;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
@@ -95,8 +106,8 @@
 
         .progress-container {
             height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-top: 5px;
             overflow: hidden;
         }
 
@@ -107,439 +118,419 @@
             transition: width 0.1s;
         }
 
-        #control-panel {
+        #controls {
             position: absolute;
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 20px;
+            gap: 15px;
             pointer-events: auto;
-            z-index: 150;
+            z-index: 200;
         }
 
-        .interactive-chip {
+        .chip {
             background: var(--panel-bg);
             backdrop-filter: blur(20px);
-            padding: 12px 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 12px;
+            padding: 10px 25px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            font-size: 11px;
             letter-spacing: 2px;
-            color: var(--secondary);
-            transition: all 0.3s;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .interactive-chip:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-        }
-
-        .interactive-chip.active {
+        .chip:hover {
             background: var(--primary);
-            color: var(--bg);
+            color: #000;
             border-color: var(--primary);
         }
 
-        #camera-feed {
+        .chip.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        #camera-status {
             position: absolute;
             top: 40px;
             left: 50%;
             transform: translateX(-50%);
-            width: 240px;
-            height: 180px;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            opacity: 0.8;
-            transition: opacity 0.3s;
+            text-align: center;
         }
 
-        #camera-feed:hover {
-            opacity: 1;
-            border-color: var(--primary);
+        #camera-status .label {
+            font-family: 'Syncopate';
+            font-size: 10px;
+            letter-spacing: 3px;
+            opacity: 0.6;
+            margin-bottom: 5px;
         }
 
-        canvas#scene-canvas {
-            display: block;
+        #camera-status .coordinate {
+            font-size: 14px;
+            color: var(--primary);
         }
 
-        #loading-screen {
+        #loading {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg);
+            background: #000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            flex-direction: column;
         }
 
         #loader-text {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 18px;
-            letter-spacing: 12px;
-            margin-bottom: 40px;
-            animation: pulse 2s infinite;
+            font-family: 'Syncopate';
+            font-size: 14px;
+            letter-spacing: 15px;
+            margin-bottom: 20px;
+            animation: glow 2s infinite;
         }
 
-        @keyframes pulse {
-            0% {
-                opacity: 0.4;
+        @keyframes glow {
+
+            0%,
+            100% {
+                color: #fff;
+                text-shadow: none;
             }
 
             50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.4;
+                color: var(--primary);
+                text-shadow: 0 0 20px var(--primary);
             }
         }
 
-        #permission-modal {
+        canvas#webgl {
+            display: block;
+        }
+
+        #permission-prompt {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 2000;
         }
 
-        .modal-content {
-            background: #0a0e1a;
+        .prompt-box {
+            max-width: 500px;
+            text-align: center;
             padding: 60px;
             border: 1px solid var(--primary);
-            text-align: center;
-            max-width: 600px;
+            background: #00050a;
         }
 
-        .modal-content h2 {
+        .prompt-box h2 {
             font-family: 'Syncopate';
-            margin-bottom: 30px;
-            letter-spacing: 4px;
+            margin-bottom: 20px;
+            font-size: 18px;
         }
 
-        .modal-content p {
-            margin-bottom: 40px;
+        .prompt-box p {
             opacity: 0.7;
-            line-height: 1.8;
+            margin-bottom: 30px;
+            font-weight: 300;
+            line-height: 1.6;
         }
 
-        .btn-primary {
+        .btn {
             background: var(--primary);
+            color: #000;
+            padding: 15px 35px;
             border: none;
-            padding: 16px 40px;
             font-family: 'Syncopate';
             font-size: 12px;
             cursor: pointer;
-            margin: 0 10px;
-            transition: transform 0.2s;
+            transition: 0.2s;
         }
 
-        .btn-primary:hover {
+        .btn:hover {
             transform: scale(1.05);
-        }
-
-        /* Scrollbar Hide */
-        ::-webkit-scrollbar {
-            display: none;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="loading-screen">
-        <div id="loader-text">QUANTUM MANIFOLD</div>
-        <div style="width: 200px; height: 1px; background: rgba(255,255,255,0.1);">
-            <div id="loader-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;">
-            </div>
-        </div>
+    <div id="loading">
+        <div id="loader-text">CELESTIAL INITIALIZATION</div>
     </div>
 
-    <div id="permission-modal">
-        <div class="modal-content">
-            <h2>BIOMETRIC AUTHORIZATION</h2>
-            <p>To initialize the Quantum Manifold, the system requires local biometric access. Your data remains on your
-                device and is never transmitted.</p>
-            <button class="btn-primary" onclick="requestAccess()">INITIALIZE SYSTEM</button>
+    <div id="permission-prompt">
+        <div class="prompt-box">
+            <h2>OBSERVATORY ACCESS</h2>
+            <p>Connect your biometric feed to sync the solar manifold with your presence. Voice controls the Sun,
+                gestures orbit the system.</p>
+            <button class="btn" onclick="startSystem()">INITIALIZE FEED</button>
         </div>
     </div>
 
     <div id="ui-wrapper">
         <div class="side-panel">
             <div class="hud-block">
-                <h1>CORE SYSTEM</h1>
+                <h1>SUN CORE</h1>
                 <div class="stat-row">
-                    <span class="stat-label">MANIFEST:</span>
-                    <span class="stat-value">QUANTUM_FLUID_V11</span>
+                    <span class="stat-label">ACTIVITY:</span>
+                    <span class="stat-value" id="val-activity">STABLE</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">ENTROPY:</span>
-                    <span class="stat-value" id="val-entropy">0.00</span>
+                    <span class="stat-label">LUMINOSITY:</span>
+                    <span class="stat-value" id="val-luminosity">1.0X</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">FLUX:</span>
-                    <span class="stat-value" id="val-flux">INACTIVE</span>
+                <div class="progress-container">
+                    <div class="progress-bar" id="pb-sun"></div>
                 </div>
             </div>
 
             <div class="hud-block">
-                <h1>BIOMETRICS</h1>
-                <div class="stat-row">
-                    <span class="stat-label">TRACKING:</span>
-                    <span class="stat-value" id="val-tracking">OFF</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">PRESENCE:</span>
-                    <span class="stat-value" id="val-presence">0%</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="pb-presence"></div>
+                <h1>CELESTIAL LOG</h1>
+                <div id="log-content">
+                    <div class="planet-info">EARTH: 3rd orbital, Habitable</div>
+                    <div class="planet-info">JUPITER: Gas giant, 67 moons detected</div>
+                    <div class="planet-info">SATURN: Rings stable at 124k km</div>
                 </div>
             </div>
         </div>
 
-        <div class="side-panel" style="align-items: flex-end;">
-            <div class="hud-block">
-                <h1>NETWORK STATUS</h1>
-                <div class="stat-row">
-                    <span class="stat-label">NEURONS:</span>
-                    <span class="stat-value">120,000</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">ENTANGLEMENT:</span>
-                    <span class="stat-value" id="val-entanglement">84.2%</span>
-                </div>
-            </div>
+        <div id="camera-status">
+            <div class="label">COORDINATES</div>
+            <div class="coordinate" id="coords">X: 0.00 Y: 0.00 Z: 800</div>
+        </div>
 
-            <div class="hud-block">
-                <h1>AUDIO_FLOW</h1>
+        <div class="side-panel">
+            <div class="hud-block" style="text-align: right;">
+                <h1>BIOMETRICS</h1>
                 <div class="stat-row">
-                    <span class="stat-label">LEVEL:</span>
+                    <span class="stat-label">G_ZOOM:</span>
+                    <span class="stat-value" id="val-zoom">1.0X</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">V_ENERGY:</span>
                     <span class="stat-value" id="val-audio">0 dB</span>
                 </div>
                 <div class="progress-container">
-                    <div class="progress-bar" id="pb-audio"></div>
+                    <div class="progress-bar" id="pb-audio" style="margin-left:auto;"></div>
+                </div>
+            </div>
+
+            <div class="hud-block" style="text-align: right;">
+                <h1>SYSTEM CONFIG</h1>
+                <div class="stat-row">
+                    <span class="stat-label">FPS:</span>
+                    <span class="stat-value">60</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">ENTROPY:</span>
+                    <span class="stat-value">0.0042</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="control-panel">
-        <div class="interactive-chip" id="btn-audio">AUDIO: DISABLED</div>
-        <div class="interactive-chip" id="btn-camera">CAMERA: DISABLED</div>
-        <div class="interactive-chip" onclick="resetView()">RESET_VIEW</div>
+    <div id="controls">
+        <div class="chip" id="btn-audio">AUDIO FEED</div>
+        <div class="chip" id="btn-camera">GESTURE SYNC</div>
+        <div class="chip" onclick="resetView()">RESET VIEW</div>
     </div>
 
-    <div id="camera-feed">
-        <canvas id="camera-canvas"></canvas>
-    </div>
-
-    <canvas id="scene-canvas"></canvas>
+    <canvas id="webgl"></canvas>
 
     <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.0/dist/hand-pose-detection.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.min.js"></script>
 
-    <!-- Custom Shaders -->
-    <script id="crystalVertex" type="x-shader/x-vertex">
-        varying vec3 vNormal;
-        varying vec3 vViewPosition;
+    <!-- Shaders -->
+    <script id="sunVertex" type="x-shader/x-vertex">
+        varying vec2 vUv;
+        varying vec3 vPosition;
         void main() {
-            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            vNormal = normalize(normalMatrix * normal);
-            vViewPosition = -mvPosition.xyz;
-            gl_Position = projectionMatrix * mvPosition;
+            vUv = uv;
+            vPosition = position;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     </script>
-    <script id="crystalFragment" type="x-shader/x-fragment">
-        varying vec3 vNormal;
-        varying vec3 vViewPosition;
-        uniform vec3 color;
-        uniform float time;
-        void main() {
-            float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewPosition)), 3.0);
-            vec3 finalColor = mix(color * 0.2, color, fresnel);
-            float pulse = sin(time * 2.0) * 0.1 + 0.9;
-            gl_FragColor = vec4(finalColor * pulse, 0.8 * fresnel + 0.1);
-        }
-    </script>
-
-    <script id="meshVertex" type="x-shader/x-vertex">
+    <script id="sunFragment" type="x-shader/x-fragment">
+        varying vec2 vUv;
+        varying vec3 vPosition;
         uniform float time;
         uniform float audio;
-        uniform vec3 gravityPoint;
-        uniform float gravityStrength;
-        varying float vAlpha;
-        void main() {
-            vec3 pos = position;
-            
-            // Audio ripple
-            float dist = length(pos);
-            float ripple = sin(dist * 0.05 - time * 5.0) * audio * 20.0;
-            pos += normal * ripple;
 
-            // Gravity interaction
-            vec3 gravityDir = gravityPoint - pos;
-            float gravityDist = length(gravityDir);
-            if(gravityDist < 300.0) {
-                pos += normalize(gravityDir) * (1.0 - gravityDist / 300.0) * gravityStrength * 50.0;
-            }
-
-            vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-            vAlpha = clamp(1.0 - (length(pos) / 1000.0), 0.0, 1.0);
-            gl_PointSize = (1000.0 / -mvPosition.z) * 1.5;
-            gl_Position = projectionMatrix * mvPosition;
+        // Simple noise for sun surface
+        float noise(vec3 p) {
+            return fract(sin(dot(p, vec3(12.9898, 78.233, 45.123))) * 43758.5453);
         }
-    </script>
 
-    <script id="meshFragment" type="x-shader/x-fragment">
-        varying float vAlpha;
-        uniform vec3 color;
         void main() {
-            float dist = length(gl_PointCoord - vec2(0.5));
-            if(dist > 0.5) discard;
-            gl_FragColor = vec4(color, vAlpha * (1.0 - dist * 2.0));
+            float n = noise(vPosition * 0.01 + time * 0.1);
+            vec3 color = mix(vec3(1.0, 0.4, 0.0), vec3(1.0, 0.9, 0.2), n);
+            color += audio * 0.5 * vec3(1.0, 0.2, 0.0);
+            
+            float edge = 1.0 - length(vUv - 0.5) * 2.0;
+            edge = pow(edge, 0.5);
+            
+            gl_FragColor = vec4(color, edge);
         }
     </script>
 
     <script>
-        const config = {
-            meshPoints: 50000,
-            color: new THREE.Color('#00f3ff'),
-            gravityStrength: 0,
-            audioLevel: 0,
-            handPos: new THREE.Vector3(1000, 0, 0)
-        };
-
-        let scene, camera, renderer, composer, mesh, core;
-        let handDetector, audioCtx, analyser;
+        // System State
+        let scene, camera, renderer, controls, sun;
+        let planets = [];
+        let audioCtx, analyser, handDetector;
         let clock = new THREE.Clock();
 
+        const config = {
+            audioLevel: 0,
+            handPos: new THREE.Vector3(),
+            handStable: false,
+            zoom: 1,
+            exposure: 1
+        };
+
+        const planetsData = [
+            { name: 'Mercury', color: '#8c8c8c', size: 4, dist: 140, speed: 1.5, orbit: 0.04 },
+            { name: 'Venus', color: '#e3bb76', size: 9, dist: 190, speed: 1.2, orbit: 0.015 },
+            { name: 'Earth', color: '#2271b3', size: 10, dist: 250, speed: 1.0, orbit: 0.01 },
+            { name: 'Mars', color: '#e27b58', size: 6, dist: 310, speed: 0.8, orbit: 0.008 },
+            { name: 'Jupiter', color: '#d39c7e', size: 24, dist: 420, speed: 0.5, orbit: 0.002 },
+            { name: 'Saturn', color: '#c5ab6e', size: 20, dist: 530, speed: 0.4, orbit: 0.0018, rings: true },
+            { name: 'Uranus', color: '#b5e1e2', size: 14, dist: 620, speed: 0.3, orbit: 0.001 },
+            { name: 'Neptune', color: '#6081ff', size: 13, dist: 700, speed: 0.2, orbit: 0.0008 }
+        ];
+
         function init() {
-            setupThree();
-            createQuantumMesh();
-            createCrystalCore();
-            setupPostProcessing();
+            setupScene();
+            createSun();
+            createPlanets();
+            createStars();
             animate();
 
             setTimeout(() => {
-                document.getElementById('permission-modal').style.display = 'flex';
-                updateLoader(100);
-            }, 1000);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('permission-prompt').style.display = 'flex';
+            }, 1500);
         }
 
-        function setupThree() {
+        function setupScene() {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
-            camera.position.set(0, 0, 800);
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.set(0, 400, 1000);
 
-            renderer = new THREE.WebGLRenderer({
-                canvas: document.getElementById('scene-canvas'),
-                antialias: true,
-                alpha: true
-            });
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl'), antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000205);
 
-            const ambient = new THREE.AmbientLight(0xffffff, 0.1);
-            scene.add(ambient);
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                composer.setSize(window.innerWidth, window.innerHeight);
             });
         }
 
-        function createQuantumMesh() {
-            const geo = new THREE.BufferGeometry();
-            const pos = new Float32Array(config.meshPoints * 3);
-            for (let i = 0; i < config.meshPoints * 3; i++) {
-                pos[i] = (Math.random() - 0.5) * 1200;
-            }
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-
+        function createSun() {
+            const geo = new THREE.SphereGeometry(80, 64, 64);
             const mat = new THREE.ShaderMaterial({
                 uniforms: {
                     time: { value: 0 },
-                    audio: { value: 0 },
-                    color: { value: config.color },
-                    gravityPoint: { value: config.handPos },
-                    gravityStrength: { value: 0 }
+                    audio: { value: 0 }
                 },
-                vertexShader: document.getElementById('meshVertex').textContent,
-                fragmentShader: document.getElementById('meshFragment').textContent,
-                transparent: true,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
+                vertexShader: document.getElementById('sunVertex').textContent,
+                fragmentShader: document.getElementById('sunFragment').textContent,
+                transparent: true
             });
+            sun = new THREE.Mesh(geo, mat);
+            scene.add(sun);
 
-            mesh = new THREE.Points(geo, mat);
-            scene.add(mesh);
-        }
-
-        function createCrystalCore() {
-            const geo = new THREE.IcosahedronGeometry(100, 1);
-            const mat = new THREE.ShaderMaterial({
-                uniforms: {
-                    color: { value: config.color },
-                    time: { value: 0 }
-                },
-                vertexShader: document.getElementById('crystalVertex').textContent,
-                fragmentShader: document.getElementById('crystalFragment').textContent,
+            // Sun Glow
+            const glowGeo = new THREE.SphereGeometry(120, 64, 64);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0xffaa00,
                 transparent: true,
+                opacity: 0.1,
                 side: THREE.BackSide
             });
-            core = new THREE.Mesh(geo, mat);
-            scene.add(core);
+            sun.add(new THREE.Mesh(glowGeo, glowMat));
 
-            const innerGeo = new THREE.IcosahedronGeometry(70, 0);
-            const innerMat = new THREE.MeshBasicMaterial({ color: config.color, wireframe: true, transparent: true, opacity: 0.2 });
-            core.add(new THREE.Mesh(innerGeo, innerMat));
+            const light = new THREE.PointLight(0xffaa00, 2, 2000);
+            scene.add(light);
         }
 
-        function setupPostProcessing() {
-            composer = new THREE.EffectComposer(renderer);
-            composer.addPass(new THREE.RenderPass(scene, camera));
+        function createPlanets() {
+            planetsData.forEach(data => {
+                const group = new THREE.Group();
+                scene.add(group);
 
-            const bloom = new THREE.UnrealBloomPass(
-                new THREE.Vector2(window.innerWidth, window.innerHeight),
-                1.5, 0.4, 0.85
-            );
-            bloom.threshold = 0.1;
-            bloom.strength = 1.0;
-            bloom.radius = 0.5;
-            composer.addPass(bloom);
+                // Planet
+                const geo = new THREE.SphereGeometry(data.size, 32, 32);
+                const mat = new THREE.MeshStandardMaterial({
+                    color: data.color,
+                    roughness: 0.7,
+                    metalness: 0.2
+                });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.x = data.dist;
+                group.add(mesh);
+
+                // Orbit Ring
+                const orbitGeo = new THREE.RingGeometry(data.dist - 1, data.dist + 1, 128);
+                const orbitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.05, side: THREE.DoubleSide });
+                const orbit = new THREE.Mesh(orbitGeo, orbitMat);
+                orbit.rotation.x = Math.PI / 2;
+                scene.add(orbit);
+
+                if (data.rings) {
+                    const ringGeo = new THREE.RingGeometry(data.size * 1.4, data.size * 2.2, 64);
+                    const ringMat = new THREE.MeshBasicMaterial({ color: data.color, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+                    const ring = new THREE.Mesh(ringGeo, ringMat);
+                    ring.rotation.x = Math.PI / 2.2;
+                    mesh.add(ring);
+                }
+
+                planets.push({
+                    group: group,
+                    mesh: mesh,
+                    data: data,
+                    angle: Math.random() * Math.PI * 2
+                });
+            });
         }
 
-        async function requestAccess() {
-            document.getElementById('permission-modal').style.display = 'none';
-            document.getElementById('loading-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+        function createStars() {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(5000 * 3);
+            for (let i = 0; i < 5000 * 3; i++) {
+                pos[i] = (Math.random() - 0.5) * 8000;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5, transparent: true });
+            scene.add(new THREE.Points(geo, mat));
+        }
 
+        async function startSystem() {
+            document.getElementById('permission-prompt').style.display = 'none';
             await initAudio();
             await initCamera();
         }
@@ -551,7 +542,6 @@
                 const source = audioCtx.createMediaStreamSource(stream);
                 analyser = audioCtx.createAnalyser();
                 source.connect(analyser);
-                document.getElementById('btn-audio').textContent = "AUDIO: ACTIVE";
                 document.getElementById('btn-audio').classList.add('active');
             } catch (e) { console.error(e); }
         }
@@ -569,66 +559,81 @@
                     solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4'
                 });
 
-                document.getElementById('btn-camera').textContent = "CAMERA: ACTIVE";
                 document.getElementById('btn-camera').classList.add('active');
-                document.getElementById('val-tracking').textContent = "BIOMETRIC";
-
-                trackHand(video);
+                trackHands(video);
             } catch (e) { console.error(e); }
         }
 
-        async function trackHand(video) {
+        async function trackHands(video) {
             const hands = await handDetector.estimateHands(video);
             if (hands.length > 0) {
                 const hand = hands[0];
-                const keypoint = hand.keypoints[9]; // Middle MCP
-                config.handPos.x = (keypoint.x / 320 - 0.5) * 1000;
-                config.handPos.y = (0.5 - keypoint.y / 240) * 1000;
-                config.handPos.z = 200;
-                config.gravityStrength = 1.5;
-                document.getElementById('val-presence').textContent = "100%";
-                document.getElementById('pb-presence').style.width = "100%";
-            } else {
-                config.gravityStrength = 0;
-                document.getElementById('val-presence').textContent = "0%";
-                document.getElementById('pb-presence').style.width = "0%";
-            }
-            requestAnimationFrame(() => trackHand(video));
-        }
+                const middle = hand.keypoints[9];
 
-        function updateLoader(val) {
-            document.getElementById('loader-bar').style.width = val + '%';
+                config.handPos.x = (middle.x / 320 - 0.5) * 2;
+                config.handPos.y = (0.5 - middle.y / 240) * 2;
+                config.handStable = true;
+
+                // Zoom detection based on hand height
+                config.zoom = 0.5 + (middle.y / 240) * 2;
+
+                document.getElementById('val-presence').textContent = "MATCH";
+                document.getElementById('val-zoom').textContent = config.zoom.toFixed(1) + "X";
+            } else {
+                config.handStable = false;
+                document.getElementById('val-presence').textContent = "SEARCHING";
+            }
+            requestAnimationFrame(() => trackHands(video));
         }
 
         function resetView() {
-            camera.position.set(0, 0, 800);
+            camera.position.set(0, 400, 1000);
+            controls.target.set(0, 0, 0);
         }
 
         function animate() {
             requestAnimationFrame(animate);
             const time = clock.getElapsedTime();
 
+            // Sun Activity
             if (analyser) {
                 const data = new Uint8Array(analyser.frequencyBinCount);
                 analyser.getByteFrequencyData(data);
-                let avg = data.reduce((a, b) => a + b) / data.length;
-                config.audioLevel = avg / 255;
-                document.getElementById('val-audio').textContent = Math.round(avg) + " unit";
-                document.getElementById('pb-audio').style.width = (avg / 128 * 100) + "%";
+                const avg = data.reduce((a, b) => a + b) / data.length;
+                config.audioLevel = avg / 128;
+
+                sun.material.uniforms.audio.value = config.audioLevel;
+                sun.scale.setScalar(1 + config.audioLevel * 0.2);
+
+                document.getElementById('val-audio').textContent = Math.round(avg) + " Hz";
+                document.getElementById('pb-audio').style.width = Math.min(avg, 100) + "%";
+                document.getElementById('pb-sun').style.width = (config.audioLevel * 100) + "%";
+                document.getElementById('val-activity').textContent = avg > 50 ? "VOLATILE" : "STABLE";
+                document.getElementById('val-luminosity').textContent = (1 + config.audioLevel).toFixed(1) + "X";
+            }
+            sun.material.uniforms.time.value = time;
+
+            // Planets Orbit
+            planets.forEach(p => {
+                p.angle += p.data.orbit * (1 + config.audioLevel * 0.5);
+                p.group.rotation.y = p.angle;
+                p.mesh.rotation.y += 0.01 * p.data.speed;
+            });
+
+            // Camera Biometric Interaction
+            if (config.handStable) {
+                camera.position.x += (config.handPos.x * 500 - camera.position.x) * 0.02;
+                camera.position.y += (400 + config.handPos.y * 200 - camera.position.y) * 0.02;
+
+                const targetZoom = 1000 * config.zoom;
+                camera.position.z += (targetZoom - camera.position.z) * 0.05;
             }
 
-            mesh.material.uniforms.time.value = time;
-            mesh.material.uniforms.audio.value = config.audioLevel;
-            mesh.material.uniforms.gravityStrength.value = config.gravityStrength;
-            mesh.material.uniforms.gravityPoint.value.copy(config.handPos);
+            document.getElementById('coords').textContent =
+                `X: ${camera.position.x.toFixed(0)} Y: ${camera.position.y.toFixed(0)} Z: ${camera.position.z.toFixed(0)}`;
 
-            core.material.uniforms.time.value = time;
-            core.rotation.y += 0.005 + config.audioLevel * 0.05;
-            core.rotation.z += 0.003;
-
-            document.getElementById('val-entropy').textContent = (Math.sin(time) * 0.1 + 0.8).toFixed(4);
-
-            composer.render();
+            controls.update();
+            renderer.render(scene, camera);
         }
 
         init();
