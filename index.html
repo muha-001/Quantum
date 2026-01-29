@@ -3,17 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SOLAR MANIFOLD - REALISTIC SPACE SIMULATOR v13.0</title>
+    <title>SOLAR MANIFOLD - CINEMATIC OBSERVATORY v14.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Syncopate:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --primary: #ffd700;
+            --primary: #ffcc00;
             --secondary: #ffffff;
             --bg: #000000;
-            --panel-bg: rgba(0, 0, 0, 0.7);
+            --panel-bg: rgba(0, 0, 0, 0.85);
+            --border: rgba(255, 204, 0, 0.2);
+            --glow: 0 0 20px rgba(255, 204, 0, 0.2);
         }
 
         * {
@@ -31,6 +33,19 @@
             user-select: none;
         }
 
+        /* Cinematic Grain & Vignette Overlay */
+        #cinematic-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+        }
+
         #ui-layer {
             position: absolute;
             top: 0;
@@ -42,83 +57,118 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 30px;
+            padding: 40px;
         }
 
         .hud-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            padding: 20px;
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            padding: 25px;
             pointer-events: auto;
-            border-radius: 2px;
+            border-radius: 4px;
+            box-shadow: var(--glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hud-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 204, 0, 0.05) 50%, transparent 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            opacity: 0.3;
         }
 
         h1 {
             font-family: 'Syncopate', sans-serif;
-            font-size: 12px;
-            letter-spacing: 6px;
+            font-size: 10px;
+            letter-spacing: 8px;
             color: var(--primary);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            display: inline-block;
         }
 
         .stat {
             display: flex;
             justify-content: space-between;
-            margin: 8px 0;
-            font-size: 11px;
-            letter-spacing: 1px;
+            margin: 12px 0;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .label {
-            opacity: 0.5;
+            opacity: 0.4;
+            font-weight: 300;
         }
 
         .value {
             color: var(--primary);
             font-weight: 600;
+            text-shadow: 0 0 10px var(--primary);
         }
 
         .progress {
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            margin-top: 5px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-top: 10px;
         }
 
         .bar {
             height: 100%;
             background: var(--primary);
             width: 0%;
-            transition: width 0.1s;
+            box-shadow: 0 0 10px var(--primary);
+            transition: width 0.1s linear;
         }
 
         #controls {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             margin-top: auto;
-            padding-bottom: 20px;
         }
 
         .btn {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 30px;
+            font-size: 9px;
             font-family: 'Syncopate';
+            letter-spacing: 3px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .btn:hover {
             border-color: var(--primary);
             color: var(--primary);
+            background: rgba(255, 204, 0, 0.05);
         }
 
         .btn.active {
             background: var(--primary);
             color: #000;
             border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
         }
 
         #loading {
@@ -134,7 +184,26 @@
             z-index: 1000;
             color: var(--primary);
             font-family: 'Syncopate';
-            letter-spacing: 10px;
+            letter-spacing: 15px;
+            font-size: 12px;
+            animation: boot-pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes boot-pulse {
+            0% {
+                opacity: 0.3;
+                letter-spacing: 12px;
+            }
+
+            50% {
+                opacity: 1;
+                letter-spacing: 18px;
+            }
+
+            100% {
+                opacity: 0.3;
+                letter-spacing: 12px;
+            }
         }
 
         #permission-overlay {
@@ -143,7 +212,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.98);
             display: none;
             align-items: center;
             justify-content: center;
@@ -152,61 +221,106 @@
         }
 
         .prompt-card {
-            max-width: 450px;
-            padding: 50px;
+            max-width: 500px;
+            padding: 70px;
             border: 1px solid var(--primary);
+            background: #050505;
+        }
+
+        #scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 60;
         }
 
         canvas {
             display: block;
+        }
+
+        /* Scanning HUD animation */
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(transparent, var(--primary), transparent);
+            opacity: 0.2;
+            animation: scan 4s infinite linear;
+        }
+
+        @keyframes scan {
+            from {
+                top: -10%;
+            }
+
+            to {
+                top: 110%;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div id="loading">SYNCHRONIZING CELESTIAL DATA...</div>
+    <div id="loading">QUANTUM_LENS INITIALIZING</div>
+
+    <div id="scanline"></div>
+    <div id="cinematic-overlay"></div>
 
     <div id="permission-overlay">
         <div class="prompt-card">
-            <h1>BIOMETRIC SYNC</h1>
-            <p style="font-size: 12px; margin-bottom: 30px; opacity: 0.7;">Initialize biometric authorization to link
-                your presence with the Solar Manifold. Voice modulates solar activity, gestures control orbital
-                mechanics.</p>
-            <button class="btn active" onclick="startSim()">AUTHORIZE SYSTEM</button>
+            <h1>AUTH_REQUIRED</h1>
+            <p style="font-size: 11px; margin-bottom: 40px; opacity: 0.6; line-height: 2; letter-spacing: 1px;">
+                Initialize the neural link to process 32-bit linear celestial rendering. Voice input modulates
+                Photospheric Density. Gesture Tracking initiates Orbital Stabilization.</p>
+            <button class="btn active" onclick="startSim()">INIT NEURAL LINK</button>
         </div>
     </div>
 
     <div id="ui-layer">
         <div style="display: flex; justify-content: space-between;">
-            <div class="hud-panel" style="width: 280px;">
-                <h1>SOLAR STATUS</h1>
-                <div class="stat"><span class="label">MAGNITUDE:</span><span class="value" id="val-solar">1.00</span>
+            <div class="hud-panel" style="width: 320px;">
+                <div class="scanning-line"></div>
+                <h1>SOLAR_DYNAMICS</h1>
+                <div class="stat"><span class="label">MAGNITUDE</span><span class="value" id="val-solar">1.00</span>
                 </div>
-                <div class="stat"><span class="label">TEMP:</span><span class="value">5,778 K</span></div>
+                <div class="stat"><span class="label">CORE_TEMP</span><span class="value">5,778 K</span></div>
+                <div class="stat"><span class="label">FLUX_STABILITY</span><span class="value"
+                        id="val-stabil">STABLE</span></div>
                 <div class="progress">
                     <div class="bar" id="pb-solar"></div>
                 </div>
             </div>
 
-            <div class="hud-panel" style="width: 200px; text-align: right;">
-                <h1>NAVIGATION</h1>
+            <div class="hud-panel" style="width: 240px; text-align: right; border-right: 4px solid var(--primary);">
+                <h1>OBSERVATORY_NAV</h1>
                 <div class="stat" style="justify-content: flex-end;"><span class="value" id="val-zoom">1.0X ZOOM</span>
                 </div>
                 <div class="stat" style="justify-content: flex-end;"><span class="label" id="val-coord">0, 400,
                         1000</span></div>
+                <div class="stat" style="justify-content: flex-end;"><span class="label">RENDER: LINEAR_HDR</span></div>
             </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: flex-end;">
             <div id="controls">
-                <div class="btn" id="btn-audio">AUDIO: OFF</div>
-                <div class="btn" id="btn-camera">GESTR: OFF</div>
+                <div class="btn" id="btn-audio">AUDIO: NULL</div>
+                <div class="btn" id="btn-camera">OPTIC: NULL</div>
             </div>
 
-            <div class="hud-panel" style="width: 280px;">
-                <h1>BIOMETRICS</h1>
-                <div class="stat"><span class="label">ENERGY:</span><span class="value" id="val-energy">0%</span></div>
+            <div class="hud-panel" style="width: 320px;">
+                <h1>BIOMETRIC_PROFILE</h1>
+                <div class="stat"><span class="label">NEURAL_ENERGY</span><span class="value" id="val-energy">0%</span>
+                </div>
+                <div class="stat"><span class="label">MATCH_CONFIDENCE</span><span class="value"
+                        id="val-match">98.2%</span></div>
                 <div class="progress">
                     <div class="bar" id="pb-energy"></div>
                 </div>
@@ -216,35 +330,103 @@
 
     <canvas id="webgl"></canvas>
 
-    <!-- Script Blocks -->
+    <!-- Post-Processing stack + Shaders -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Lensflare.js"></script>
+
+    <!-- Professional Post Processing -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <!-- AI Tracking -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.0/dist/hand-pose-detection.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.min.js"></script>
 
+    <!-- NEW Cinematic Sun Shader -->
     <script id="sunVertex" type="x-shader/x-vertex">
         varying vec2 vUv;
         varying vec3 vNormal;
+        varying vec3 vPosition;
         void main() {
             vUv = uv;
             vNormal = normalize(normalMatrix * normal);
+            vPosition = position;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     </script>
     <script id="sunFragment" type="x-shader/x-fragment">
         varying vec2 vUv;
         varying vec3 vNormal;
+        varying vec3 vPosition;
         uniform float time;
         uniform float audio;
 
+        // Simplex 3D Noise for Plasma
+        vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+        vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+        float snoise(vec3 v){ 
+            const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+            const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+            vec3 i  = floor(v + dot(v, C.yyy) );
+            vec3 x0 = v - i + dot(i, C.xxx) ;
+            vec3 g = step(x0.yzx, x0.xyz);
+            vec3 l = 1.0 - g;
+            vec3 i1 = min( g.xyz, l.zxy );
+            vec3 i2 = max( g.xyz, l.zxy );
+            vec3 x1 = x0 - i1 + 1.0 * C.xxx;
+            vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+            vec3 x3 = x0 - D.yyy;
+            i = mod(i, 289.0); 
+            vec4 p = permute( permute( permute( 
+                     i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                   + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) 
+                   + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+            float n_ = 1.0/7.0;
+            vec3  ns = n_ * D.wyz - D.xzx;
+            vec4 j = p - 49.0 * floor(p * ns.z *ns.z);
+            vec4 x_ = floor(j * ns.z);
+            vec4 y_ = floor(j - 7.0 * x_ );
+            vec4 x = x_ *ns.x + ns.yyyy;
+            vec4 y = y_ *ns.x + ns.yyyy;
+            vec4 h = 1.0 - abs(x) - abs(y);
+            vec4 b0 = vec4( x.xy, y.xy );
+            vec4 b1 = vec4( x.zw, y.zw );
+            vec4 s0 = floor(b0)*2.0 + 1.0;
+            vec4 s1 = floor(b1)*2.0 + 1.0;
+            vec4 sh = -step(h, vec4(0.0));
+            vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+            vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+            vec3 p0 = vec3(a0.xy,h.x);
+            vec3 p1 = vec3(a0.zw,h.y);
+            vec3 p2 = vec3(a1.xy,h.z);
+            vec3 p3 = vec3(a1.zw,h.w);
+            vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+            p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+            vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+            m = m * m;
+            return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+        }
+
         void main() {
-            float pulse = 0.8 + 0.2 * sin(time * 2.0 + vNormal.x * 5.0);
-            vec3 fire = vec3(1.0, 0.4, 0.0) * pulse;
-            fire += audio * 0.5 * vec3(1.0, 0.8, 0.2);
-            gl_FragColor = vec4(fire, 1.0);
+            float n = snoise(vPosition * 0.04 + time * 0.5);
+            float n2 = snoise(vPosition * 0.1 - time * 0.2);
+            
+            vec3 coreColor = vec3(1.0, 0.6, 0.0);
+            vec3 flareColor = vec3(1.0, 0.1, 0.0);
+            
+            float plasma = mix(n, n2, 0.5) * 0.5 + 0.5;
+            vec3 finalColor = mix(flareColor, coreColor, plasma);
+            
+            // Audio boost
+            finalColor += audio * 1.5 * vec3(1.0, 0.8, 0.4);
+            
+            gl_FragColor = vec4(finalColor, 1.0);
         }
     </script>
 
@@ -262,8 +444,9 @@
         varying vec3 vNormal;
         varying vec3 vViewPosition;
         uniform vec3 color;
+        uniform float power;
         void main() {
-            float intensity = pow(0.7 - dot(vNormal, normalize(vViewPosition)), 4.0);
+            float intensity = pow(0.7 - dot(vNormal, normalize(vViewPosition)), power);
             gl_FragColor = vec4(color, intensity);
         }
     </script>
@@ -273,81 +456,86 @@
             sun: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/sun.jpg',
             earth: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg',
             mars: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/mars.jpg',
-            moon: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/moon_1024.jpg',
+            jupiter: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/jupiter.jpg',
             stars: 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/galaxy_starfield.png'
         };
 
-        let scene, camera, renderer, controls, sun;
+        let scene, camera, renderer, composer, controls, sun;
         let planetSystem = [];
         let audioCtx, analyser, detector;
         let clock = new THREE.Clock();
         const loader = new THREE.TextureLoader();
 
-        const config = {
-            audio: 0,
-            hand: new THREE.Vector3(),
-            active: false,
-            zoom: 1
-        };
+        const config = { audio: 0, hand: new THREE.Vector3(), active: false, zoom: 1 };
 
         const planets = [
-            { name: 'Mercury', color: '#7a7a7a', size: 3.8, dist: 150, orbit: 0.04 },
-            { name: 'Venus', color: '#e3bb76', size: 9.5, dist: 220, orbit: 0.015 },
-            { name: 'Earth', color: '#2271b3', size: 10, dist: 300, orbit: 0.01, texture: TEXTURES.earth, atmo: '#0088ff' },
-            { name: 'Mars', color: '#e27b58', size: 5.3, dist: 400, orbit: 0.008, texture: TEXTURES.mars },
-            { name: 'Jupiter', color: '#d39c7e', size: 28, dist: 600, orbit: 0.002 },
-            { name: 'Saturn', color: '#c5ab6e', size: 24, dist: 800, orbit: 0.0018, rings: true },
-            { name: 'Uranus', color: '#b5e1e2', size: 12, dist: 1000, orbit: 0.001 },
-            { name: 'Neptune', color: '#6081ff', size: 11, dist: 1200, orbit: 0.0008 }
+            { name: 'Mercury', color: '#7a7a7a', size: 3.8, dist: 180, orbit: 0.03 },
+            { name: 'Venus', color: '#e3bb76', size: 9.5, dist: 250, orbit: 0.012 },
+            { name: 'Earth', color: '#2271b3', size: 10, dist: 350, orbit: 0.008, texture: TEXTURES.earth, atmo: '#00aaff' },
+            { name: 'Mars', color: '#e27b58', size: 5.3, dist: 460, orbit: 0.007, texture: TEXTURES.mars },
+            { name: 'Jupiter', color: '#d39c7e', size: 32, dist: 650, orbit: 0.002, texture: TEXTURES.jupiter },
+            { name: 'Saturn', color: '#c5ab6e', size: 28, dist: 850, orbit: 0.0015, rings: true },
+            { name: 'Neptune', color: '#6081ff', size: 12, dist: 1300, orbit: 0.0006 }
         ];
 
         function init() {
             setupWorld();
             createSun();
             createSpacePlanets();
+            setupPostProcessing();
             animate();
 
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('permission-overlay').style.display = 'flex';
-            }, 1000);
+            }, 1500);
         }
 
         function setupWorld() {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 20000);
-            camera.position.set(0, 600, 1500);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 30000);
+            camera.position.set(0, 800, 2000);
 
             renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl'), antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Professional Lighting Config
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.maxDistance = 8000;
+            controls.dampingFactor = 0.04;
 
-            // Skybox
-            const skyGeo = new THREE.SphereGeometry(10000, 32, 32);
+            // Milky Way High-Res
+            const skyGeo = new THREE.SphereGeometry(20000, 64, 64);
             const skyMat = new THREE.MeshBasicMaterial({
                 map: loader.load(TEXTURES.stars),
-                side: THREE.BackSide
+                side: THREE.BackSide,
+                transparent: true,
+                opacity: 0.6
             });
             scene.add(new THREE.Mesh(skyGeo, skyMat));
 
-            const ambient = new THREE.AmbientLight(0xffffff, 0.05);
+            const ambient = new THREE.AmbientLight(0xffffff, 0.02);
             scene.add(ambient);
 
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
         }
 
         function createSun() {
-            const geo = new THREE.SphereGeometry(100, 64, 64);
+            const geo = new THREE.SphereGeometry(120, 128, 128);
             const mat = new THREE.ShaderMaterial({
                 uniforms: { time: { value: 0 }, audio: { value: 0 } },
                 vertexShader: document.getElementById('sunVertex').textContent,
@@ -356,16 +544,17 @@
             sun = new THREE.Mesh(geo, mat);
             scene.add(sun);
 
-            const sunLight = new THREE.PointLight(0xffddaa, 2.5, 10000, 1.5);
+            // Intense Point Light
+            const sunLight = new THREE.PointLight(0xffcc00, 8.0, 15000, 2);
             sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 2048;
-            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.mapSize.width = 4096;
+            sunLight.shadow.mapSize.height = 4096;
             scene.add(sunLight);
 
-            // Realistic Glow
-            const atmoGeo = new THREE.SphereGeometry(105, 64, 64);
+            // Corona Bloom Helper
+            const atmoGeo = new THREE.SphereGeometry(128, 64, 64);
             const atmoMat = new THREE.ShaderMaterial({
-                uniforms: { color: { value: new THREE.Color(0xff6600) } },
+                uniforms: { color: { value: new THREE.Color(0xffaa00) }, power: { value: 6.0 } },
                 vertexShader: document.getElementById('atmoVertex').textContent,
                 fragmentShader: document.getElementById('atmoFragment').textContent,
                 transparent: true,
@@ -379,12 +568,12 @@
                 const group = new THREE.Group();
                 scene.add(group);
 
-                const geo = new THREE.SphereGeometry(p.size, 64, 64);
+                const geo = new THREE.SphereGeometry(p.size, 128, 128);
                 const mat = new THREE.MeshStandardMaterial({
-                    color: p.texture ? 0xffffff : p.color,
                     map: p.texture ? loader.load(p.texture) : null,
-                    roughness: 0.8,
-                    metalness: 0.1
+                    color: p.texture ? 0xffffff : p.color,
+                    roughness: 0.9,
+                    metalness: 0.05
                 });
                 const mesh = new THREE.Mesh(geo, mat);
                 mesh.position.x = p.dist;
@@ -393,9 +582,9 @@
                 group.add(mesh);
 
                 if (p.atmo) {
-                    const atmoGeo = new THREE.SphereGeometry(p.size * 1.05, 64, 64);
+                    const atmoGeo = new THREE.SphereGeometry(p.size * 1.05, 128, 128);
                     const atmoMat = new THREE.ShaderMaterial({
-                        uniforms: { color: { value: new THREE.Color(p.atmo) } },
+                        uniforms: { color: { value: new THREE.Color(p.atmo) }, power: { value: 4.0 } },
                         vertexShader: document.getElementById('atmoVertex').textContent,
                         fragmentShader: document.getElementById('atmoFragment').textContent,
                         transparent: true,
@@ -405,20 +594,32 @@
                 }
 
                 if (p.rings) {
-                    const ringGeo = new THREE.RingGeometry(p.size * 1.5, p.size * 2.5, 64);
+                    const ringGeo = new THREE.RingGeometry(p.size * 1.4, p.size * 2.6, 128);
                     const ringMat = new THREE.MeshStandardMaterial({
-                        color: p.color,
-                        side: THREE.DoubleSide,
-                        transparent: true,
-                        opacity: 0.4
+                        color: p.color, side: THREE.DoubleSide, transparent: true, opacity: 0.4
                     });
                     const ring = new THREE.Mesh(ringGeo, ringMat);
-                    ring.rotation.x = Math.PI / 2.4;
+                    ring.rotation.x = Math.PI / 2.2;
                     mesh.add(ring);
                 }
 
                 planetSystem.push({ group, mesh, data: p, angle: Math.random() * Math.PI * 2 });
             });
+        }
+
+        function setupPostProcessing() {
+            composer = new THREE.EffectComposer(renderer);
+            composer.addPass(new THREE.RenderPass(scene, camera));
+
+            // Dramatic Bloom
+            const bloom = new THREE.UnrealBloomPass(
+                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                2.5, 0.4, 0.1
+            );
+            bloom.threshold = 0.05;
+            bloom.strength = 1.8;
+            bloom.radius = 1.0;
+            composer.addPass(bloom);
         }
 
         async function startSim() {
@@ -429,13 +630,13 @@
 
         async function initAudio() {
             try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx = new AudioContext();
                 const s = await navigator.mediaDevices.getUserMedia({ audio: true });
                 const src = audioCtx.createMediaStreamSource(s);
                 analyser = audioCtx.createAnalyser();
                 src.connect(analyser);
                 document.getElementById('btn-audio').classList.add('active');
-                document.getElementById('btn-audio').textContent = 'AUDIO: ON';
+                document.getElementById('btn-audio').textContent = 'AUDIO_FEED: ONLINE';
             } catch (e) { }
         }
 
@@ -449,7 +650,7 @@
                     runtime: 'mediapipe', solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4'
                 });
                 document.getElementById('btn-camera').classList.add('active');
-                document.getElementById('btn-camera').textContent = 'GESTR: ON';
+                document.getElementById('btn-camera').textContent = 'OPTIC_SYNC: ONLINE';
                 track(v);
             } catch (e) { }
         }
@@ -462,9 +663,7 @@
                 config.hand.y = (0.5 - p.y / 240) * 2;
                 config.zoom = 0.5 + (p.y / 240) * 2;
                 config.active = true;
-            } else {
-                config.active = false;
-            }
+            } else { config.active = false; }
             requestAnimationFrame(() => track(v));
         }
 
@@ -478,7 +677,7 @@
                 const avg = d.reduce((a, b) => a + b) / d.length;
                 config.audio = avg / 128;
                 sun.material.uniforms.audio.value = config.audio;
-                sun.scale.setScalar(1 + config.audio * 0.15);
+                sun.scale.setScalar(1 + config.audio * 0.12);
                 document.getElementById('val-solar').textContent = (1 + config.audio).toFixed(2);
                 document.getElementById('pb-solar').style.width = Math.min(avg, 100) + '%';
                 document.getElementById('val-energy').textContent = Math.round(avg / 1.28) + '%';
@@ -487,15 +686,15 @@
             sun.material.uniforms.time.value = time;
 
             planetSystem.forEach(p => {
-                p.angle += p.data.orbit * (1 + config.audio * 0.5);
+                p.angle += p.data.orbit * (1 + config.audio * 0.4);
                 p.group.rotation.y = p.angle;
                 p.mesh.rotation.y += 0.005;
             });
 
             if (config.active) {
-                camera.position.x += (config.hand.x * 1500 - camera.position.x) * 0.05;
-                camera.position.y += (600 + config.hand.y * 500 - camera.position.y) * 0.05;
-                const tz = 1500 * config.zoom;
+                camera.position.x += (config.hand.x * 2000 - camera.position.x) * 0.05;
+                camera.position.y += (800 + config.hand.y * 500 - camera.position.y) * 0.05;
+                const tz = 2000 * config.zoom;
                 camera.position.z += (tz - camera.position.z) * 0.1;
             }
 
@@ -503,7 +702,7 @@
             document.getElementById('val-coord').textContent = `${Math.round(camera.position.x)}, ${Math.round(camera.position.y)}, ${Math.round(camera.position.z)}`;
 
             controls.update();
-            renderer.render(scene, camera);
+            composer.render();
         }
 
         init();
